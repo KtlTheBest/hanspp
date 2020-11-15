@@ -1,0 +1,102 @@
+
+// CUP specification for Cflat.
+// Hans de Nivelle
+
+import java_cup.runtime.* ; 
+
+parser code {:  
+   public void syntax_error( Symbol next )
+   {
+      System. out. println( "Syntax Error at position " + 
+                               ( next. left + 1 ) + "/" + next. right +
+                               " for lookahead " + 
+                               sym. terminalNames [ next. sym ] +
+                               " with attribute " + next. value );
+   }
+:}
+
+// Terminals (tokens returned by the tokenizer): 
+
+terminal     ast.Bool         BOOLCONST;
+terminal     ast.Char         CHARCONST;
+terminal     ast.Integer      INTEGERCONST;
+terminal     ast.Double       DOUBLECONST;
+terminal     ast.String       STRINGCONST;
+terminal     ast.Pointer      POINTERCONST; 
+terminal     ast.Identifier   IDENTIFIER;
+
+terminal          VOID, BOOL, CHAR, INTEGER, DOUBLE, POINTER, ARRAY;
+terminal          IF, THEN, ELSE, WHILE, DO, PRINT, RETURN;
+terminal          FUNCTION, STRUCTDEF, CONSTANT;
+terminal          BEGIN, END;
+terminal          LPAR, RPAR, LSQPAR, RSQPAR, COMMA, DOT, ARROW;
+terminal          COLON, SEMICOLON;
+terminal          ASSIGN;
+   // For the operators, I use python names as much as possible: 
+terminal          QUESTION, OR, AND, NOT;
+terminal          EQ, NE, LT, GT, LE, GE;
+terminal          ADD, SUB, MUL, TRUEDIV;
+terminal          AMPERSAND, PLUSPLUS, MINUSMINUS;
+
+non terminal Program        Prog ; 
+non terminal java.util.ArrayList< type.Field > Decllist, Decllist2;
+non terminal type.Field                        Decl;
+non terminal type.Type                         Type;
+non terminal ast.Tree                          Stat;
+non terminal ast.Tree       Expr, Expr1, Expr2, Expr3, Expr4, Expr5, Expr6;
+non terminal ast.Tree       Expr7, Expr8, Expr9, Expr10, Expr11, Expr12; 
+non terminal java.util.ArrayList< ast.Tree >   Exprlist ;
+
+Prog ::=   Prog:p CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
+              {: p. addconstant( i. id, b ); RESULT = p; :} 
+
+         | Prog:p CONSTANT IDENTIFIER:i ASSIGN CHARCONST:c SEMICOLON 
+              {: p. addconstant( i. id, c ); RESULT = p; :}
+         | Prog:p CONSTANT IDENTIFIER:i ASSIGN INTEGERCONST: j SEMICOLON
+              {: p. addconstant( i. id, j ); RESULT = p; :}
+         | Prog:p STRUCTDEF IDENTIFIER:i ASSIGN 
+                  LPAR Decllist : lst RPAR SEMICOLON
+            {: p. addstruct( i. id, lst ); RESULT = p; :}
+         | Prog:p FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON 
+           Type: rettype Stat: body
+           {: p. addfunction( i. id, params, rettype, body ); 
+              RESULT = p; :} 
+         |
+            {: RESULT = new Program( ); :}
+         ; 
+
+Decllist ::=
+         {: RESULT = new java.util.ArrayList< type.Field > ( ); :}
+         |
+         Decllist2 : lst 
+         {: RESULT = lst; :}
+         ;
+
+Decllist2 ::= Decl : d 
+                     {: RESULT = new java.util.ArrayList< type.Field > ( );
+                        RESULT. add( d ); :} 
+          |
+             Decllist2 : lst COMMA Decl : d 
+                {: RESULT = lst; RESULT. add( d ); :} 
+          ;
+
+Decl ::= IDENTIFIER:id COLON Type:tp 
+         {:
+             RESULT = new type.Field( id. id, tp );  
+         :}
+         ;
+
+Type ::=   VOID {: RESULT = new type.Void( ); :}
+         | BOOL {: RESULT = new type.Bool( ); :}
+         ;
+
+Stat  ::=  IF Expr : cond THEN Stat : body 
+              {: RESULT = new ast.Apply( "[if]", cond, body ); :}
+         |
+           IF Expr :cond THEN Stat:s1 ELSE Stat:s2 
+              {: RESULT = new ast.Apply( "[if]", cond, s1, s2 ); :} 
+         ;
+
+Expr ::= Expr1:e      {: RESULT = e; :} 
+   // Not really changed since Task 5.
+

@@ -1,0 +1,19 @@
+
+constant b = false;
+constant i = 44;
+constant pi = 3.141592653589793;
+
+structdef complex = ( re: double, im : double );
+
+function sum( i : integer, j : integer ) : void
+   if 4 then
+      print "four"
+   else
+      4 
+
+structdef list = ( d : double, rest : pointer( list ));
+
+function listsum( d : pointer( list ) ) : array( 10, double ) 
+   print "the sum"
+
+## this is the end
