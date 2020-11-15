@@ -34,7 +34,7 @@ Double  = (0|[1-9][0-9]*)\.[0-9]+((e|E)-?0*[1-9][0-9]*)?
 Operator = [-+*/<>=!|\\/\^&~]
 Alphabet = [a-zA-Z_]
 AlnumCharsAndMore = [a-zA-Z0-9_]
-Identifier = {Alphabet}{AlnumCharsAndMore}*
+Identifier = [:jletter:]([:jletter:] | [0-9])*
 
 // reserved words
 
@@ -53,9 +53,11 @@ BoolClause = bool
 CharClause = char
 IntegerClause = integer
 DoubleClause = double
+VoidClause = void
 
 MultiLineComment = "/*"([^*]|\*[^/])*"*/"
 SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
+QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
 
@@ -106,8 +108,9 @@ SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
 {CharClause} { return symbol( sym.CHAR ); }
 {IntegerClause} { return symbol( sym.INT ); }
 {DoubleClause} { return symbol( sym.DBL ); }
+{VoidClause} { return symbol( sym.VOID, new ast.Pointer(0)); }
 
-{Identifier} { return symbol( sym.STRING, new tree.String( yytext() ) ); }
+{Identifier} { return symbol( sym.STRING, new ast.Integer( new java.lang.Integer( yytext() ) ) ); }
 
 // Error fallback:
 
