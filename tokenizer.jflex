@@ -54,6 +54,10 @@ CharClause = char
 IntegerClause = integer
 DoubleClause = double
 VoidClause = void
+PrintClause = print
+ReturnClause = return
+BeginClause = begin
+EndClause = end
 
 MultiLineComment = "/*"([^*]|\*[^/])*"*/"
 SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
@@ -61,23 +65,25 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
 
+"="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
-"["    { return symbol( sym. SQLPAR ); }
-"]"    { return symbol( sym. SQRPAR ); }
+"["    { return symbol( sym. LSQPAR ); }
+"]"    { return symbol( sym. RSQPAR ); }
 "("    { return symbol( sym. LPAR ); }
 ")"    { return symbol( sym. RPAR ); }
 "."    { return symbol( sym. DOT ); }
 ","    { return symbol( sym. COMMA ); }
-"+"    { return symbol( sym. PLUS ); }
-"-"    { return symbol( sym. MINUS ); }
-"*"    { return symbol( sym. TIMES ); }
-"/"    { return symbol( sym. DIVIDES ); }
+"+"    { return symbol( sym. ADD ); }
+"-"    { return symbol( sym. SUB ); }
+"*"    { return symbol( sym. MUL ); }
+"/"    { return symbol( sym. TRUEDIV ); }
 "%"    { return symbol( sym. MODULO ); }
 "&&"   { return symbol( sym. AND ); }
 "||"   { return symbol( sym. OR ); }
-"&"    { return symbol( sym. AMP ); }
-"++"   { return symbol( sym. PP ); }
-"--"   { return symbol( sym. MM ); }
+"?"    { return symbol( sym. QUESTION ); }
+"&"    { return symbol( sym. AMPERSAND ); }
+"++"   { return symbol( sym. PLUSPLUS ); }
+"--"   { return symbol( sym. MINUSMINUS ); }
 "=="   { return symbol( sym. EQ ); }
 "<="   { return symbol( sym. LE ); }
 ">="   { return symbol( sym. GE ); }
@@ -85,13 +91,17 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 ">"    { return symbol( sym. GT ); }
 "<"    { return symbol( sym. LT ); }
 "!"    { return symbol( sym. NOT ); }
+"?"    { return symbol( sym. QUESTION ); }
+"->"   { return symbol( sym. ARROW ); }
+":"    { return symbol( sym. COLON ); }
+";"    { return symbol( sym. SEMICOLON ); }
 
 {WhiteSpace}     { }
 {SingleLineComment} { }
 {MultiLineComment} { }
 ";"              { return symbol( sym. EOF ); }
-{Integer} { return symbol( sym.INTEGER, new tree.Integer(new java.math.BigInteger( yytext() ) ) ); }
-{Double}  { return symbol( sym.DOUBLE, new tree.Double(new java.lang.Double( yytext() ) ) ); }
+{Integer} { return symbol( sym.INTEGER, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
+{Double}  { return symbol( sym.DOUBLE, new ast.Double(new java.lang.Double( yytext() ) ) ); }
 
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }
@@ -102,15 +112,19 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 {ArrayClause} { return symbol( sym.ARRAY ); }
 {FunctionClause} { return symbol( sym.FUNCTION ); }
 {StructClause} { return symbol( sym.STRUCT ); }
-{ConstantClause} { return symbol( sym.CONST ); }
+{ConstantClause} { return symbol( sym.CONSTANT ); }
 {NullClause} { return symbol( sym.NULL ); }
 {BoolClause} { return symbol( sym.BOOL ); }
 {CharClause} { return symbol( sym.CHAR ); }
 {IntegerClause} { return symbol( sym.INT ); }
 {DoubleClause} { return symbol( sym.DBL ); }
 {VoidClause} { return symbol( sym.VOID, new ast.Pointer(0)); }
+{PrintClause} { return symbol( sym.PRINT ); }
+{ReturnClause} { return symbold( sym.RETURN ); }
+{BeginClause} { return symbold( sym.BEGIN ); }
+{EndClause} { return symbold( sym.END ); }
 
-{Identifier} { return symbol( sym.STRING, new ast.Integer( new java.lang.Integer( yytext() ) ) ); }
+{Identifier} { return symbol( sym.IDENTIFIER, new ast.Identifier( new java.lang.String( yytext() ) ) ); }
 
 // Error fallback:
 

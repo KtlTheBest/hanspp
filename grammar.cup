@@ -97,6 +97,6 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = new ast.Apply( "[if]", cond, s1, s2 ); :} 
          ;
 
-Expr ::= Expr1:e      {: RESULT = e; :} 
+Expr ::= Expr2 
    // Not really changed since Task 5.
 
