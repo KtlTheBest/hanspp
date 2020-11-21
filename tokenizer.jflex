@@ -30,6 +30,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 IntegerConst = (0|[1-9][0-9]*)
 DoubleConst  = (0|[1-9][0-9]*)\.[0-9]+((e|E)-?0*[1-9][0-9]*)?
 CharConstAlnum = \'[a-zA-Z0-9]\'
+StringConst = \".+?\"
 
 Operator = [-+*/<>=!|\\/\^&~]
 Alphabet = [a-zA-Z_]
@@ -64,8 +65,8 @@ SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
-"true"  { return symbol( sym. BOOLCONST, true ); }
-"false" { return symbol( sym. BOOLCONST, false ); }
+"true"  { return symbol( sym. BOOLCONST, new ast.Bool(true) ); }
+"false" { return symbol( sym. BOOLCONST, new ast.Bool(false) ); }
 
 "="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
@@ -100,10 +101,9 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 {WhiteSpace}     { }
 {SingleLineComment} { }
-{MultiLineComment} { }
-";"              { return symbol( sym. EOF ); }
 {IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
+{QuotedString}  { return symbol( sym.STRINGCONST, new ast.String(new java.lang.String( yytext() ) ) ); }
 
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }
@@ -115,19 +115,19 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 {ArrayClause} { return symbol( sym.ARRAY ); }
 {FunctionClause} { return symbol( sym.FUNCTION ); }
 
-{StructClause} { return symbol( sym.STRUCT ); }
+{StructClause} { return symbol( sym.STRUCTDEF ); }
 {ConstantClause} { return symbol( sym.CONSTANT ); }
-{NullClause} { return symbol( sym.NULL ); }
+{NullClause} { return symbol( sym.POINTERCONST, new ast.Pointer(0) ); }
 {BoolClause} { return symbol( sym.BOOL ); }
 {CharClause} { return symbol( sym.CHAR ); }
-{IntegerClause} { return symbol( sym.INT ); }
-{DoubleClause} { return symbol( sym.DBL ); }
+{IntegerClause} { return symbol( sym.INTEGER ); }
+{DoubleClause} { return symbol( sym.DOUBLE ); }
 {VoidClause} { return symbol( sym.VOID, new ast.Pointer(0)); }
 
 {PrintClause} { return symbol( sym.PRINT ); }
-{ReturnClause} { return symbold( sym.RETURN ); }
-{BeginClause} { return symbold( sym.BEGIN ); }
-{EndClause} { return symbold( sym.END ); }
+{ReturnClause} { return symbol( sym.RETURN ); }
+{BeginClause} { return symbol( sym.BEGIN ); }
+{EndClause} { return symbol( sym.END ); }
 
 {Identifier} { return symbol( sym.IDENTIFIER, new ast.Identifier( new java.lang.String( yytext() ) ) ); }
 

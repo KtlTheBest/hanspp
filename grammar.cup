@@ -35,7 +35,7 @@ terminal          ASSIGN;
    // For the operators, I use python names as much as possible: 
 terminal          QUESTION, OR, AND, NOT;
 terminal          EQ, NE, LT, GT, LE, GE;
-terminal          ADD, SUB, MUL, TRUEDIV;
+terminal          ADD, SUB, MUL, TRUEDIV, MODULO;
 terminal          AMPERSAND, PLUSPLUS, MINUSMINUS;
 
 non terminal Program        Prog ; 
@@ -46,6 +46,7 @@ non terminal ast.Tree                          Stat;
 non terminal ast.Tree       Expr, Expr1, Expr2, Expr3, Expr4, Expr5, Expr6;
 non terminal ast.Tree       Expr7, Expr8, Expr9, Expr10, Expr11, Expr12; 
 non terminal java.util.ArrayList< ast.Tree >   Exprlist ;
+non terminal java.util.ArrayList< ast.Tree >   Exprlist2 ;
 
 Prog ::=   Prog:p CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
               {: p. addconstant( i. id, b ); RESULT = p; :} 
@@ -54,6 +55,8 @@ Prog ::=   Prog:p CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
               {: p. addconstant( i. id, c ); RESULT = p; :}
          | Prog:p CONSTANT IDENTIFIER:i ASSIGN INTEGERCONST: j SEMICOLON
               {: p. addconstant( i. id, j ); RESULT = p; :}
+         | Prog:p CONSTANT IDENTIFIER:i ASSIGN DOUBLECONST: d SEMICOLON
+              {: p. addconstant( i. id, d ); RESULT = p; :}
          | Prog:p STRUCTDEF IDENTIFIER:i ASSIGN 
                   LPAR Decllist : lst RPAR SEMICOLON
             {: p. addstruct( i. id, lst ); RESULT = p; :}
@@ -91,7 +94,6 @@ Type ::=   VOID    {: RESULT = new type.Void( ); :}
          | CHAR    {: RESULT = new type.Char( ); :}
          | INTEGER {: RESULT = new type.Integer( ); :}
          | DOUBLE  {: RESULT = new type.Double( ); :}
-         | STRING  {: RESULT = new type.String( ); :}
          ;
 
 Stat  ::=  IF Expr : cond THEN Stat : body 
@@ -110,20 +112,20 @@ Expr2 ::= Expr3 : Cond QUESTION Expr3 : True COLON Expr3 : False
       | Expr3 : e3 {: RESULT = e3; :}
       ;
 
-Expr3 ::= Exrp3 : cond1 OR Expr4 : cond2 {: RESULT = new ast.Apply("??", cond1, true, cond2); :}
+Expr3 ::= Expr3 : cond1 OR Expr4 : cond2 {: RESULT = new ast.Apply("??", cond1, new ast.Bool(true), cond2); :}
     | Expr4 : e4 {: RESULT = e4; :}
     ;
 
-Expr4 ::= Exrp4 : cond1 AND Expr5 : cond2 {: RESULT = new ast.Apply("??", cond1, cond2, false); :}
+Expr4 ::= Expr4 : cond1 AND Expr5 : cond2 {: RESULT = new ast.Apply("??", cond1, cond2, new ast.Bool(false)); :}
     | Expr5 : e5 {: RESULT = e5; :}
     ;
 
-Expr5 ::= NOT Expr5 : e5 {: RESULT = new ast.Apply("??", e5, false, true); :}
+Expr5 ::= NOT Expr5 : e5 {: RESULT = new ast.Apply("??", e5, new ast.Bool(false), new ast.Bool(true)); :}
     | Expr6 : e6 {: RESULT = e6; :}
     ;
 
 Expr6 ::= Expr7 : e1 EQ Expr7 : e2 {: RESULT = new ast.Apply("==", e1, e2); :}
-    | Expr7 : e1 NEQ Expr7 : e2    {: RESULT = new ast.Apply("!=", e1, e2); :}
+    | Expr7 : e1 NE Expr7 : e2    {: RESULT = new ast.Apply("!=", e1, e2); :}
     | Expr7 : e1 LT Expr7 : e2     {: RESULT = new ast.Apply("<", e1, e2); :}
     | Expr7 : e1 GT Expr7 : e2     {: RESULT = new ast.Apply(">", e1, e2); :}
     | Expr7 : e1 LE Expr7 : e2     {: RESULT = new ast.Apply("<=", e1, e2); :}
@@ -142,7 +144,7 @@ Expr8 ::= Expr8 : e1 MUL Expr9 : e2 {: RESULT = new ast.Apply("*", e1, e2); :}
     | Expr9 : e9 {: RESULT = e9; :}
     ;
 
-Exrp9 ::= MINUS Expr9 : e9 {: RESULT = new ast.Apply("-u", e9); :}
+Expr9 ::= SUB Expr9 : e9 {: RESULT = new ast.Apply("-u", e9); :}
     | Expr10 : e10 {: RESULT = e10; :}
     ;
 
@@ -162,7 +164,9 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("xpp", e12); :}
     | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), new ast.Apply("*", e12)); :}
     | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("*", new ast.Apply("+", e12, e)); :}
     | IDENTIFIER : id {: RESULT = id; :}
-    | IDENTIFIER : id LPAR Exprlist : lst RPAR {: RESULT = new ast.Apply(id.toString(), lst); :}
+    | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
+                                                ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
+                                                RESULT = new ast.Apply(id.toString(), arr); :}
     | BOOLCONST : boolConst {: RESULT = boolConst; :}
     | CHARCONST : charConst {: RESULT = charConst; :}
     | INTEGERCONST : intConst {: RESULT = intConst; :}
@@ -171,10 +175,13 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("xpp", e12); :}
     ;
 
 Exprlist ::= Exprlist2 : lst {: RESULT = lst; :}
-    | {: RESULT = new java.util.Arraylist <ast.Tree> (); :}
+    | {: RESULT = new java.util.ArrayList <ast.Tree> (); :}
     ;
 
-Exprlist2 ::= Expr : e {: RESULT = e; :}
+Exprlist2 ::= Expr : e {: 
+                        java.util.ArrayList <ast.Tree> lst = new java.util.ArrayList(); 
+                        lst.add(e); 
+                        RESULT = lst; :}
     | Exprlist : lst COMMA Expr : e {: lst.add(e); RESULT = lst; :}
     ;
 
