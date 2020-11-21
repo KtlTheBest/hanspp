@@ -1,3 +1,4 @@
+// This is supposed to specify LISP tokens.
 
 import java_cup.runtime.* ; 
 
@@ -8,7 +9,6 @@ import java_cup.runtime.* ;
 %cup
 %line
 %column
-%yylexthrow ScanError
 
 %{
    StringBuffer readstring = new StringBuffer();
@@ -24,35 +24,114 @@ import java_cup.runtime.* ;
 %}
 
 LineTerminator = \r|\n|\r\n
+InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
-BlockComment = \/\*( (\*)+[^/*] | [^*])*(\*)+\/
+
+IntegerConst = (0|[1-9][0-9]*)
+DoubleConst  = (0|[1-9][0-9]*)\.[0-9]+((e|E)-?0*[1-9][0-9]*)?
+CharConstAlnum = \'[a-zA-Z0-9]\'
+
+Operator = [-+*/<>=!|\\/\^&~]
+Alphabet = [a-zA-Z_]
+AlnumCharsAndMore = [a-zA-Z0-9_]
+Identifier = [:jletter:]([:jletter:] | [0-9])*
+
+// reserved words
+
+IfClause = if
+ThenClause = then
+ElseClause = else
+WhileClause = while
+DoClause = do
+PointerClause = pointer
+ArrayClause = array
+FunctionClause = function
+StructClause = structdef
+ConstantClause = constant
+NullClause = null
+BoolClause = bool
+CharClause = char
+IntegerClause = integer
+DoubleClause = double
+VoidClause = void
+PrintClause = print
+ReturnClause = return
+BeginClause = begin
+EndClause = end
+
+ultiLineComment = "/*"([^*]|\*[^/])*"*/"
+SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
+"true"  { return symbol( sym. BOOLCONST, true ); }
+"false" { return symbol( sym. BOOLCONST, false ); }
 
-"void" { return symbol( sym. VOID ); }
-"bool" { return symbol( sym. BOOL ); }
-"char" { return symbol( sym. CHAR ); }
-"integer" { return symbol( sym. INTEGER ); }
-
-"null" { return symbol( sym.POINTERCONST, new ast.Pointer(0) ); }
-
+"="    { return symbol( sym. ASSIGN ); }
+"."    { return symbol( sym. DOT ); }
+"["    { return symbol( sym. LSQPAR ); }
+"]"    { return symbol( sym. RSQPAR ); }
 "("    { return symbol( sym. LPAR ); }
 ")"    { return symbol( sym. RPAR ); }
-
-[:jletter:]([:jletter:] | [0-9])*
-          { return symbol( sym.IDENTIFIER, new ast.Identifier( yytext( ) )); }
-
-"0" | [1-9][0-9]*
-          { return symbol( sym.INTEGERCONST,
-                     new ast.Integer( new java.lang.Integer( yytext( ) ))); }
+"."    { return symbol( sym. DOT ); }
+","    { return symbol( sym. COMMA ); }
+"+"    { return symbol( sym. ADD ); }
+"-"    { return symbol( sym. SUB ); }
+"*"    { return symbol( sym. MUL ); }
+"/"    { return symbol( sym. TRUEDIV ); }
+"%"    { return symbol( sym. MODULO ); }
+"&&"   { return symbol( sym. AND ); }
+"||"   { return symbol( sym. OR ); }
+"?"    { return symbol( sym. QUESTION ); }
+"&"    { return symbol( sym. AMPERSAND ); }
+"++"   { return symbol( sym. PLUSPLUS ); }
+"--"   { return symbol( sym. MINUSMINUS ); }
+"=="   { return symbol( sym. EQ ); }
+"<="   { return symbol( sym. LE ); }
+">="   { return symbol( sym. GE ); }
+"!="   { return symbol( sym. NE ); }
+">"    { return symbol( sym. GT ); }
+"<"    { return symbol( sym. LT ); }
+"!"    { return symbol( sym. NOT ); }
+"?"    { return symbol( sym. QUESTION ); }
+"->"   { return symbol( sym. ARROW ); }
+":"    { return symbol( sym. COLON ); }
+";"    { return symbol( sym. SEMICOLON ); }
 
 {WhiteSpace}     { }
-{BlockComment}  { } 
-"#"              { return symbol( sym. EOF ); }
+{SingleLineComment} { }
+{MultiLineComment} { }
+";"              { return symbol( sym. EOF ); }
+{IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
+{DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
+
+{IfClause} { return symbol( sym.IF ); }
+{ThenClause} { return symbol( sym.THEN ); }
+{ElseClause} { return symbol( sym.ELSE ); }
+{WhileClause} { return symbol( sym.WHILE ); }
+{DoClause} { return symbol( sym.DO ); }
+
+{PointerClause} { return symbol( sym.POINTER ); }
+{ArrayClause} { return symbol( sym.ARRAY ); }
+{FunctionClause} { return symbol( sym.FUNCTION ); }
+
+{StructClause} { return symbol( sym.STRUCT ); }
+{ConstantClause} { return symbol( sym.CONSTANT ); }
+{NullClause} { return symbol( sym.NULL ); }
+{BoolClause} { return symbol( sym.BOOL ); }
+{CharClause} { return symbol( sym.CHAR ); }
+{IntegerClause} { return symbol( sym.INT ); }
+{DoubleClause} { return symbol( sym.DBL ); }
+{VoidClause} { return symbol( sym.VOID, new ast.Pointer(0)); }
+
+{PrintClause} { return symbol( sym.PRINT ); }
+{ReturnClause} { return symbold( sym.RETURN ); }
+{BeginClause} { return symbold( sym.BEGIN ); }
+{EndClause} { return symbold( sym.END ); }
+
+{Identifier} { return symbol( sym.IDENTIFIER, new ast.Identifier( new java.lang.String( yytext() ) ) ); }
 
 // Error fallback:
 
-[^]    { throw new ScanError( "Unrecognized character <" + yytext( ) + ">",
-                              yyline, yycolumn ); }
+[^]    { throw new java.lang.Error( "Illegal character <" + yytext( ) + ">" ); }
 
