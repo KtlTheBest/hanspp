@@ -86,8 +86,12 @@ Decl ::= IDENTIFIER:id COLON Type:tp
          :}
          ;
 
-Type ::=   VOID {: RESULT = new type.Void( ); :}
-         | BOOL {: RESULT = new type.Bool( ); :}
+Type ::=   VOID    {: RESULT = new type.Void( ); :}
+         | BOOL    {: RESULT = new type.Bool( ); :}
+         | CHAR    {: RESULT = new type.Char( ); :}
+         | INTEGER {: RESULT = new type.Integer( ); :}
+         | DOUBLE  {: RESULT = new type.Double( ); :}
+         | STRING  {: RESULT = new type.String( ); :}
          ;
 
 Stat  ::=  IF Expr : cond THEN Stat : body 
@@ -163,6 +167,7 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("xpp", e12); :}
     | CHARCONST : charConst {: RESULT = charConst; :}
     | INTEGERCONST : intConst {: RESULT = intConst; :}
     | DOUBLECONST : doubleConst {: RESULT = doubleConst; :}
+    | LPAR Expr : e RPAR {: RESULT = e; :}
     ;
 
 Exprlist ::= Exprlist2 : lst {: RESULT = lst; :}

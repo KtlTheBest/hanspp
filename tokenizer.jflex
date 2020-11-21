@@ -28,8 +28,9 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
-Integer = (0|[1-9][0-9]*)
-Double  = (0|[1-9][0-9]*)\.[0-9]+((e|E)-?0*[1-9][0-9]*)?
+IntegerConst = (0|[1-9][0-9]*)
+DoubleConst  = (0|[1-9][0-9]*)\.[0-9]+((e|E)-?0*[1-9][0-9]*)?
+CharConstAlnum = \'[a-zA-Z0-9]\'
 
 Operator = [-+*/<>=!|\\/\^&~]
 Alphabet = [a-zA-Z_]
@@ -64,6 +65,8 @@ SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
+"true"  { return symbol( sym. BOOLCONST, true ); }
+"false" { return symbol( sym. BOOLCONST, false ); }
 
 "="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
@@ -100,17 +103,19 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 {SingleLineComment} { }
 {MultiLineComment} { }
 ";"              { return symbol( sym. EOF ); }
-{Integer} { return symbol( sym.INTEGER, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
-{Double}  { return symbol( sym.DOUBLE, new ast.Double(new java.lang.Double( yytext() ) ) ); }
+{IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
+{DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
 
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }
 {ElseClause} { return symbol( sym.ELSE ); }
 {WhileClause} { return symbol( sym.WHILE ); }
 {DoClause} { return symbol( sym.DO ); }
+
 {PointerClause} { return symbol( sym.POINTER ); }
 {ArrayClause} { return symbol( sym.ARRAY ); }
 {FunctionClause} { return symbol( sym.FUNCTION ); }
+
 {StructClause} { return symbol( sym.STRUCT ); }
 {ConstantClause} { return symbol( sym.CONSTANT ); }
 {NullClause} { return symbol( sym.NULL ); }
@@ -119,6 +124,7 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 {IntegerClause} { return symbol( sym.INT ); }
 {DoubleClause} { return symbol( sym.DBL ); }
 {VoidClause} { return symbol( sym.VOID, new ast.Pointer(0)); }
+
 {PrintClause} { return symbol( sym.PRINT ); }
 {ReturnClause} { return symbold( sym.RETURN ); }
 {BeginClause} { return symbold( sym.BEGIN ); }
