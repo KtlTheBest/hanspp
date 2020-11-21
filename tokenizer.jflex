@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 import java_cup.runtime.* ; 
 
@@ -56,3 +55,4 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 [^]    { throw new ScanError( "Unrecognized character <" + yytext( ) + ">",
                               yyline, yycolumn ); }
+
