@@ -1,3 +1,6 @@
 *.class
 ./**/*.class
 *.jar
+Lexer.java
+Parser.java
+*.java~
