@@ -4,24 +4,25 @@
 
 import java_cup.runtime.* ; 
 
-parser code {:  
+parser code {:
    public void syntax_error( Symbol next )
    {
-      System. out. println( "Syntax Error at position " + 
+      System. out. println( "Syntax Error at position " +
                                ( next. left + 1 ) + "/" + next. right +
-                               " for lookahead " + 
+                               " for lookahead " +
                                sym. terminalNames [ next. sym ] +
                                " with attribute " + next. value );
    }
-:}
 
+   public Program parsetree;
+:}
 // Terminals (tokens returned by the tokenizer): 
 
 terminal     ast.Bool         BOOLCONST;
 terminal     ast.Char         CHARCONST;
 terminal     ast.Integer      INTEGERCONST;
 terminal     ast.Double       DOUBLECONST;
-terminal     ast.String       STRINGCONST;
+terminal     ast.String       STRING;
 terminal     ast.Pointer      POINTERCONST; 
 terminal     ast.Identifier   IDENTIFIER;
 
@@ -43,30 +44,31 @@ non terminal java.util.ArrayList< type.Field > Decllist, Decllist2;
 non terminal type.Field                        Decl;
 non terminal type.Type                         Type;
 non terminal ast.Tree                          Stat;
+non terminal ast.Tree                          Statlist;
 non terminal ast.Tree       Expr, Expr1, Expr2, Expr3, Expr4, Expr5, Expr6;
 non terminal ast.Tree       Expr7, Expr8, Expr9, Expr10, Expr11, Expr12; 
 non terminal java.util.ArrayList< ast.Tree >   Exprlist ;
 non terminal java.util.ArrayList< ast.Tree >   Exprlist2 ;
 
-Prog ::=   Prog:p CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
-              {: p. addconstant( i. id, b ); RESULT = p; :} 
+Prog ::=   Prog CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
+              {: parsetree. addconstant( i. id, b ); :}
 
-         | Prog:p CONSTANT IDENTIFIER:i ASSIGN CHARCONST:c SEMICOLON 
-              {: p. addconstant( i. id, c ); RESULT = p; :}
-         | Prog:p CONSTANT IDENTIFIER:i ASSIGN INTEGERCONST: j SEMICOLON
-              {: p. addconstant( i. id, j ); RESULT = p; :}
-         | Prog:p CONSTANT IDENTIFIER:i ASSIGN DOUBLECONST: d SEMICOLON
-              {: p. addconstant( i. id, d ); RESULT = p; :}
-         | Prog:p STRUCTDEF IDENTIFIER:i ASSIGN 
-                  LPAR Decllist : lst RPAR SEMICOLON
-            {: p. addstruct( i. id, lst ); RESULT = p; :}
-         | Prog:p FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON 
+         | Prog CONSTANT IDENTIFIER:i ASSIGN CHARCONST:c SEMICOLON
+              {: parsetree. addconstant( i. id, c ); :}
+         | Prog CONSTANT IDENTIFIER:i ASSIGN INTEGERCONST: j SEMICOLON
+              {: parsetree. addconstant( i. id, j ); :}
+         | Prog CONSTANT IDENTIFIER:i ASSIGN DOUBLECONST:d SEMICOLON
+               {: parsetree. addconstant( i. id, d ); :}
+
+         | Prog STRUCTDEF IDENTIFIER:i ASSIGN
+                 LPAR Decllist : lst RPAR SEMICOLON
+            {: parsetree. addstruct( i. id, lst ); :}
+         | Prog FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON
            Type: rettype Stat: body
-           {: p. addfunction( i. id, params, rettype, body ); 
-              RESULT = p; :} 
+           {: parsetree. addfunction( i. id, params, rettype, body ); :}
          |
-            {: RESULT = new Program( ); :}
-         ; 
+            {: parsetree = new Program( ); :}
+         ;
 
 Decllist ::=
          {: RESULT = new java.util.ArrayList< type.Field > ( ); :}
@@ -101,7 +103,39 @@ Stat  ::=  IF Expr : cond THEN Stat : body
          |
            IF Expr :cond THEN Stat:s1 ELSE Stat:s2 
               {: RESULT = new ast.Apply( "[if]", cond, s1, s2 ); :} 
+         |
+           WHILE Expr : e DO Stat : stat
+              {: RESULT = new ast.Apply( "[while]", e, stat ); :}
+         |
+           BEGIN Statlist : statlist END
+              {: RESULT = statlist; :}
+         |
+           PRINT Expr : e
+              {: RESULT = new ast.Apply("[print]", e); :}
+         |
+           PRINT STRING : str
+              {: RESULT = new ast.Apply("[print]", str); :}
+         |
+           RETURN Expr : e
+              {: RESULT = new ast.Apply("[return]", e); :}
+         |
+           Expr : e
+              {: RESULT = e; :}
+         |
+           Decl : d
+              {: RESULT = d; :}
          ;
+
+Statlist ::= Stat : s {: RESULT = s; :}
+    | Statlist : slst SEMICOLON Stat : s {: 
+      int len = slst.nrsubTrees();
+      ast.Tree[] res = new ast.Tree[len + 1];
+      for(int i = 0; i < len; ++ i){
+        res[i] = slst.getsubTree(i);
+      }
+      res[len] = slst.getsubTree(i);
+      RESULT = new ast.Apply("[begin-end]", res); :}
+      ;
 
 Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("=", e1, e2); :}
     | Expr2 : e2 {: RESULT = e2; :}

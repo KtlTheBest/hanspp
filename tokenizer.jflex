@@ -103,7 +103,7 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 {SingleLineComment} { }
 {IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
-{QuotedString}  { return symbol( sym.STRINGCONST, new ast.String(new java.lang.String( yytext() ) ) ); }
+{QuotedString}  { return symbol( sym.STRING, new ast.String(new java.lang.String( yytext() ) ) ); }
 
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }

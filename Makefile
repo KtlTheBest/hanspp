@@ -1,7 +1,7 @@
 
 Flags = -classpath ./java-cup-11b-runtime.jar:.
 
-all: Parser.java Lexer.java Lexer.class Parser.class tokenizer.jflex grammar.cup Main.class Main.java
+all: ast/Apply.class ast/Tree.class Parser.java Lexer.java Lexer.class Parser.class tokenizer.jflex grammar.cup Main.class Main.java
 
 clean:
 	rm -rf ./Lexer.java
