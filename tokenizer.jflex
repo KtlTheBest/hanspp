@@ -61,13 +61,11 @@ BeginClause = begin
 EndClause = end
 
 ultiLineComment = "/*"([^*]|\*[^/])*"*/"
-SingleLineComment = "//"{InputCharacter}*{LineTerminator}?
+SingleLineCommentOld = "//"{InputCharacter}*{LineTerminator}?
+SingleLineComment = "#"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 %%
-"true"  { return symbol( sym. BOOLCONST, new ast.Bool(true) ); }
-"false" { return symbol( sym. BOOLCONST, new ast.Bool(false) ); }
-
 "="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
 "["    { return symbol( sym. LSQPAR ); }
@@ -101,6 +99,9 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 {WhiteSpace}     { }
 {SingleLineComment} { }
+
+"true"  { return symbol( sym. BOOLCONST, new ast.Bool(true) ); }
+"false" { return symbol( sym. BOOLCONST, new ast.Bool(false) ); }
 {IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
 {QuotedString}  { return symbol( sym.STRING, new ast.String(new java.lang.String( yytext() ) ) ); }

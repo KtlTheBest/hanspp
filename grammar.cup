@@ -44,7 +44,7 @@ non terminal java.util.ArrayList< type.Field > Decllist, Decllist2;
 non terminal type.Field                        Decl;
 non terminal type.Type                         Type;
 non terminal ast.Tree                          Stat;
-non terminal ast.Tree                          Statlist;
+non terminal java.util.ArrayList <ast.Tree>    Statlist;
 non terminal ast.Tree       Expr, Expr1, Expr2, Expr3, Expr4, Expr5, Expr6;
 non terminal ast.Tree       Expr7, Expr8, Expr9, Expr10, Expr11, Expr12; 
 non terminal java.util.ArrayList< ast.Tree >   Exprlist ;
@@ -96,6 +96,28 @@ Type ::=   VOID    {: RESULT = new type.Void( ); :}
          | CHAR    {: RESULT = new type.Char( ); :}
          | INTEGER {: RESULT = new type.Integer( ); :}
          | DOUBLE  {: RESULT = new type.Double( ); :}
+         | POINTER LPAR Type : t RPAR {: RESULT = new type.Pointer(t); :}
+         | ARRAY LPAR INTEGERCONST : cnst COMMA Type : t RPAR 
+            {: RESULT = new type.Array(cnst.i, t); :}
+         | ARRAY LPAR IDENTIFIER: id COMMA Type : tp RPAR
+              {: ast.Tree val = parsetree. constdefs. get( id.id );
+                 if( val == null )
+                    throw new SemanticError( "identifier " + id.id +
+                        " used as array size but has no constant definition" );
+                 if( val instanceof ast.Integer )
+                 {
+                    RESULT = new type.Array( ((ast.Integer) val).i, tp );
+                 }
+                 else
+                    throw new SemanticError( "identifier " + id.id +
+                       " used in array size but not defined as integer" );
+              :}
+         | IDENTIFIER : id {: 
+              System.out.println("KEEEK");
+              System.out.println(id.toString());
+              //System.out.println(id.type.toString());
+              id.type = new type.Struct(id.id);
+              RESULT = id.type; :}
          ;
 
 Stat  ::=  IF Expr : cond THEN Stat : body 
@@ -108,7 +130,8 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = new ast.Apply( "[while]", e, stat ); :}
          |
            BEGIN Statlist : statlist END
-              {: RESULT = statlist; :}
+              {: ast.Tree[] arr = statlist.toArray(new ast.Tree[0]);
+                 RESULT = new ast.Apply("[begin-end]", arr); :}
          |
            PRINT Expr : e
               {: RESULT = new ast.Apply("[print]", e); :}
@@ -123,26 +146,22 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = e; :}
          |
            Decl : d
-              {: RESULT = d; :}
+              {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = id; :}
          ;
 
-Statlist ::= Stat : s {: RESULT = s; :}
-    | Statlist : slst SEMICOLON Stat : s {: 
-      int len = slst.nrsubTrees();
-      ast.Tree[] res = new ast.Tree[len + 1];
-      for(int i = 0; i < len; ++ i){
-        res[i] = slst.getsubTree(i);
-      }
-      res[len] = slst.getsubTree(i);
-      RESULT = new ast.Apply("[begin-end]", res); :}
+Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst = 
+                                new java.util.ArrayList<ast.Tree>(); 
+                         lst.add(s); 
+                         RESULT = lst; :}
+    | Statlist : slst SEMICOLON Stat : s {: slst.add(s); RESULT = slst; :}
       ;
 
-Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("=", e1, e2); :}
-    | Expr2 : e2 {: RESULT = e2; :}
+Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("[=]", e1, e2); :}
+    | Expr2 : e2 {: RESULT = new ast.Apply("[Expr]", e2); :}
     ;
 
 Expr2 ::= Expr3 : Cond QUESTION Expr3 : True COLON Expr3 : False 
-      {: RESULT = new ast.Apply("??", Cond, True, False); :}
+      {: RESULT = new ast.Apply("[??]", Cond, True, False); :}
       | Expr3 : e3 {: RESULT = e3; :}
       ;
 
@@ -205,6 +224,7 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("xpp", e12); :}
     | CHARCONST : charConst {: RESULT = charConst; :}
     | INTEGERCONST : intConst {: RESULT = intConst; :}
     | DOUBLECONST : doubleConst {: RESULT = doubleConst; :}
+    | POINTERCONST : pntr {: RESULT = pntr; :}
     | LPAR Expr : e RPAR {: RESULT = e; :}
     ;
 
@@ -216,6 +236,6 @@ Exprlist2 ::= Expr : e {:
                         java.util.ArrayList <ast.Tree> lst = new java.util.ArrayList(); 
                         lst.add(e); 
                         RESULT = lst; :}
-    | Exprlist : lst COMMA Expr : e {: lst.add(e); RESULT = lst; :}
+    | Exprlist2 : lst COMMA Expr : e {: lst.add(e); RESULT = lst; :}
     ;
 
