@@ -65,6 +65,12 @@ SingleLineCommentOld = "//"{InputCharacter}*{LineTerminator}?
 SingleLineComment = "#"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
+Alnum = [0-9a-zA-Z]
+SpecialChar = [!@#$%\^&*\(\)-_=+|/?\[\];:,.<>{}]
+EscapeChar = "\\"[brtnf'\"]
+
+CharConst = (Alnum|SpecialChar|EscapeChar)
+
 %%
 "="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
@@ -104,7 +110,20 @@ QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 "false" { return symbol( sym. BOOLCONST, new ast.Bool(false) ); }
 {IntegerConst} { return symbol( sym.INTEGERCONST, new ast.Integer(new java.lang.Integer( yytext() ) ) ); }
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
-{QuotedString}  { return symbol( sym.STRING, new ast.String(new java.lang.String( yytext() ) ) ); }
+{QuotedString}  { String x = yytext(); return symbol( sym.STRING, new ast.String(new java.lang.String( x.substring(1, x.length() - 1) ) ) ); }
+{CharConst}  { 
+  String x = yytext();
+  char c = x.charAt(0);
+  if(c == '\\'){
+    c = x.charAt(1);
+    if(c == 'b') c = '\b';
+    if(c == 'f') c = '\f';
+    if(c == 't') c = '\t';
+    if(c == 'r') c = '\r';
+    if(c == 'n') c = '\n';
+  }
+  
+  return symbol( sym. CHARCONST, new ast.Char(c) );}
 
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }

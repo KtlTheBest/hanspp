@@ -143,7 +143,7 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = new ast.Apply("[return]", e); :}
          |
            Expr : e
-              {: RESULT = e; :}
+              {: RESULT = new ast.Apply("[expr]", e); :}
          |
            Decl : d
               {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = id; :}
@@ -157,7 +157,7 @@ Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst =
       ;
 
 Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("[=]", e1, e2); :}
-    | Expr2 : e2 {: RESULT = new ast.Apply("[Expr]", e2); :}
+    | Expr2 : e2 {: RESULT = e2; :}
     ;
 
 Expr2 ::= Expr3 : Cond QUESTION Expr3 : True COLON Expr3 : False 
