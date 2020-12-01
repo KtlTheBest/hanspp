@@ -14,7 +14,7 @@ parser code {:
                                " with attribute " + next. value );
    }
 
-   public Program parsetree;
+   public cflat.Program parsetree;
 :}
 // Terminals (tokens returned by the tokenizer): 
 
@@ -39,7 +39,7 @@ terminal          EQ, NE, LT, GT, LE, GE;
 terminal          ADD, SUB, MUL, TRUEDIV, MODULO;
 terminal          AMPERSAND, PLUSPLUS, MINUSMINUS;
 
-non terminal Program        Prog ; 
+non terminal cflat.Program        Prog ; 
 non terminal java.util.ArrayList< type.Field > Decllist, Decllist2;
 non terminal type.Field                        Decl;
 non terminal type.Type                         Type;
@@ -67,7 +67,7 @@ Prog ::=   Prog CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
            Type: rettype Stat: body
            {: parsetree. addfunction( i. id, params, rettype, body ); :}
          |
-            {: parsetree = new Program( ); :}
+            {: parsetree = new cflat.Program( ); :}
          ;
 
 Decllist ::=
@@ -147,7 +147,9 @@ Stat  ::=  IF Expr : cond THEN Stat : body
          |
            Decl : d
               {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = id; :}
-         ;
+         |
+           RETURN
+           ;
 
 Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst = 
                                 new java.util.ArrayList<ast.Tree>(); 
@@ -201,7 +203,7 @@ Expr9 ::= SUB Expr9 : e9 {: RESULT = new ast.Apply("-u", e9); :}
     | Expr10 : e10 {: RESULT = e10; :}
     ;
 
-Expr10 ::= POINTER Expr10 : e10 {: RESULT = new ast.Apply("*", e10); :}
+Expr10 ::= MUL Expr10 : e10 {: RESULT = new ast.Apply("*", e10); :}
     | AMPERSAND Expr10 : e10 {: RESULT = new ast.Apply("&", e10); :}
     | Expr11 : e11 {: RESULT = e11; :}
     ;

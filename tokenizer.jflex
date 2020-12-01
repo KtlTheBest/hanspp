@@ -60,16 +60,17 @@ ReturnClause = return
 BeginClause = begin
 EndClause = end
 
-ultiLineComment = "/*"([^*]|\*[^/])*"*/"
+MultiLineComment = "/*"([^*]|\*[^/])*"*/"
 SingleLineCommentOld = "//"{InputCharacter}*{LineTerminator}?
 SingleLineComment = "#"{InputCharacter}*{LineTerminator}?
 QuotedString = \"( [^\"\\] | (\\n) | (\\t) | (\\\\) )* \"
 
 Alnum = [0-9a-zA-Z]
-SpecialChar = [!@#$%\^&*\(\)-_=+|/?\[\];:,.<>{}]
-EscapeChar = "\\"[brtnf'\"]
+SpecialChar = [^\r\n\t ]
+EscapeSymbols = [brtnf\'\"\\0]
+EscapeChar = "\\"{EscapeSymbols}
 
-CharConst = (Alnum|SpecialChar|EscapeChar)
+CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
 
 %%
 "="    { return symbol( sym. ASSIGN ); }
@@ -105,6 +106,7 @@ CharConst = (Alnum|SpecialChar|EscapeChar)
 
 {WhiteSpace}     { }
 {SingleLineComment} { }
+{MultiLineComment} { }
 
 "true"  { return symbol( sym. BOOLCONST, new ast.Bool(true) ); }
 "false" { return symbol( sym. BOOLCONST, new ast.Bool(false) ); }
@@ -112,10 +114,13 @@ CharConst = (Alnum|SpecialChar|EscapeChar)
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
 {QuotedString}  { String x = yytext(); return symbol( sym.STRING, new ast.String(new java.lang.String( x.substring(1, x.length() - 1) ) ) ); }
 {CharConst}  { 
+  System.out.println("Hello KEK");
   String x = yytext();
   char c = x.charAt(0);
   if(c == '\\'){
+    System.out.println("If KEEK");
     c = x.charAt(1);
+    if(c == '0') c = '\u0000';
     if(c == 'b') c = '\b';
     if(c == 'f') c = '\f';
     if(c == 't') c = '\t';
@@ -153,5 +158,5 @@ CharConst = (Alnum|SpecialChar|EscapeChar)
 
 // Error fallback:
 
-[^]    { throw new java.lang.Error( "Illegal character <" + yytext( ) + ">" ); }
+[^]    { throw new java.lang.Error( "Illegal character <" + yytext( ) + "> at line " + Integer.toString(yyline + 1) + " and column " + Integer.toString(yycolumn + 1) ); }
 

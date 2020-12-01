@@ -1,7 +1,10 @@
 
 Flags = -classpath ./java-cup-11b-runtime.jar:.
 
-all : Main.class \
+all : Lexer.java \
+	Parser.java \
+	Lexer.class \
+	Parser.class \
   ast/Tree.class \
   type/Type.class \
   type/Void.class \
@@ -23,7 +26,7 @@ all : Main.class \
   ast/String.class \
   ast/Select.class \
   ast/Apply.class \
-  Lexer.class \
+	Main.class \
   exec
 
 clean :
