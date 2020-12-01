@@ -59,6 +59,12 @@ public class String extends Tree
       res += "\n";
       return res;
    }
+
+   public String clone( ) 
+   {
+      return new String(s);
+   }
+
 };
 
 

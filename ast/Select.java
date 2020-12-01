@@ -35,6 +35,11 @@ public class Select extends Tree
       return out. toString( ); 
    }
 
+   public Select clone( )
+   {
+      return new Select( field, sub );
+   }
+
 };
 
 

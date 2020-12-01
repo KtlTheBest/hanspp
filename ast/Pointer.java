@@ -30,6 +30,10 @@ public class Pointer extends Tree
       return res;
    }
 
+   public Pointer clone( )
+   { 
+      return new Pointer(p);
+   }
 };
 
 

@@ -25,6 +25,11 @@ public class Double extends Tree
       return res;
    }
 
+   public Double clone( )
+   {
+      return new Double(d); 
+   }
+
 };
 
 

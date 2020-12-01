@@ -44,6 +44,11 @@ public class Apply extends Tree
       return out. toString( ); 
    }
 
+   public Apply clone( ) 
+   {
+      return new Apply( function, sub );
+   }
+
 };
 
 

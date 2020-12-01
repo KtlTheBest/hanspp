@@ -25,6 +25,10 @@ public class Bool extends Tree
       return res;
    }
 
+   public Bool clone( ) 
+   {
+      return new Bool(b);
+   }
 };
 
 

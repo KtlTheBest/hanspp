@@ -28,11 +28,16 @@ public class StructStore
    }
 
   
-   // True if we contain this struct:
+   // True if we contain this struct name: 
  
    public boolean contains( java.lang.String name )
    {
       return defs.get( name ) != null; 
+   }
+
+   public Field[] get( java.lang.String name )
+   {
+      return defs.get( name );
    }
 
    // space in memory, needed for struct name.
@@ -101,7 +106,7 @@ public class StructStore
    // For example if the fields have types
    // f1:struct(double,double), f2:int, then
    // 0-th field has offset 0, and 1-st field has offset 2.
-   // We assume that existence of the field and the struct was
+   // We assume that existence of the field and the struct has been 
    // checked.
 
    public 
@@ -123,7 +128,7 @@ public class StructStore
 
    // Type of the i-th field in structname.
    // If you want to find the type of a field from its name,
-   // you first have to call position( fieldname ).
+   // you first have to call position( fieldname ) first. 
 
    public
    Type fieldtype( java.lang.String structname, int i )
@@ -136,7 +141,14 @@ public class StructStore
 
       return fields[i]. tp;
    }
-    
+   
+   public void forEach( 
+      java.util.function.BiConsumer< ? super java.lang.String, 
+                                     ? super Field[] > proc )
+   {
+      defs. forEach( proc ); 
+   }
+
    public java.lang.String toString( )
    {
       StringBuilder res = new StringBuilder( ); 
@@ -147,21 +159,20 @@ public class StructStore
          res. append( "   " ); 
          res. append( "struct " );
          res. append( def. getKey( ). toString( ));
-         res. append( " := { " );
+         res. append( " := ( " );
          Field[] val = def. getValue( );
          for( int i = 0; i != val. length; ++ i )
          {
             if( i != 0 ) res. append( ", " );
             res. append( val[i] ); 
          } 
-         res. append( " }\n" );
+         res. append( " )\n" );
       }
 
       return res. toString( ); 
    };
 
 };
-
 
 
 

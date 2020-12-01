@@ -1,7 +1,7 @@
 
 package ast;
 
-public abstract class Tree
+public abstract class Tree 
 {
    public type.Type type;
    public char lr;      // Must be 'L', 'R' or ' ' in case of unknown. 
@@ -63,6 +63,9 @@ public abstract class Tree
          res. append( "   " );
       return res. toString( );
    }
+
+   abstract public Tree clone( );
+
 };
 
 

@@ -24,6 +24,12 @@ public class Char extends Tree
       res += "\n";
       return res;
    }
+
+   public Char clone( )  
+   {
+      return new Char(c);
+   }
+
 };
 
 

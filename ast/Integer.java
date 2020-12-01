@@ -5,7 +5,7 @@ package ast;
 
 public class Integer extends Tree  
 {
-   public java.lang.Integer i;
+   public int i;
 
    public Integer( int i )
    {
@@ -25,6 +25,10 @@ public class Integer extends Tree
       return res;
    }
 
+   public Integer clone( ) 
+   {
+      return new Integer(i);
+   }
 };
 
 

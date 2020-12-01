@@ -3,17 +3,117 @@ constant b = false;
 constant i = 44;
 constant pi = 3.141592653589793;
 
+constant many = 100;
+
 structdef complex = ( re: double, im : double );
 
-function sum( i : integer, j : integer ) : void
-   if 4 then
-      print "four"
-   else
-      4 
+structdef list = ( first : double, next : pointer( list ));
 
-structdef list = ( d : double, rest : pointer( list ));
+function listsum( p : pointer( list ) ) : double 
+begin
+   sum : double;
+   sum = 0.0; 
+   while p != null do
+   begin
+      sum = sum + p -> first ;
+      p = p -> next 
+   end;
+   return sum
+end
 
-function listsum( d : pointer( list ) ) : array( 10, double ) 
-   print "the sum"
+
+function complex( re : double, im : double ) : complex
+begin
+   res : complex;
+   res. re = re;
+   res. im = im;
+   return res
+end
+
+function complexsum( c1 : complex, c2 : complex ) : complex
+   return complex( c1. re + c2. re, c1. im + c2. im ) 
+
+function fact( n : integer ) : double
+begin
+   res : double;
+   res = 1; 
+   while n != 0 do 
+   begin 
+      res = res * n;
+      -- n 
+   end;
+   return res 
+end
+
+function length( p : pointer( list ) ) : integer
+begin
+   len : integer; 
+   len = 1;
+      /* We don't have syntax for immediate initialization */
+      /* of form integer len = 0;                          */
+
+   while p != null do
+   begin
+      ++ len;
+      p = p -> next 
+   end; 
+   return len
+end
+
+function strcpy( p : pointer( char ), q : pointer( char )) : void 
+begin
+   while *p != '\0' do
+      *q ++ = *p ++  
+end
+
+structdef wronglist = ( first : double, rest : pointer( wronglist2 ));
+structdef wronglist2 = ( first : array( 0, double ), second : array( 4, wronglist )); 
+
+constant dim = 10;
+
+structdef matrix = ( val : array( dim, array( dim, double )));
+
+function matproduct( m1 : matrix, m2 : matrix ) : matrix
+begin
+   result : matrix ;
+
+   i : integer;
+   i = 0;
+   while i < dim do
+   begin
+      j : integer;
+      j = 0;
+      while j < dim do
+      begin
+         k : integer;
+         k = 0;
+         while k < dim do
+         begin
+            result.val[i][j] = result.val[i][j] + 
+                               m1.val[i][k] + m2.val[k][j] ;
+               /* not sure if this is mathematically correct. 
+                  Does not matter. */ 
+            ++ k 
+         end;  
+         ++ j 
+      end;
+      ++ i 
+   end 
+end
+
+function scope( ) : void
+begin
+   i: integer;
+   j: integer;
+   begin
+      i : double; 
+      print i  /*  the double. */
+   end;
+   begin
+      i : complex; 
+      i.re = 0.0; i.im = j  
+   end;
+   print i 
+end
 
 ## this is the end

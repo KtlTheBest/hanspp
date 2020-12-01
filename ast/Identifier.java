@@ -26,6 +26,11 @@ public class Identifier extends Tree
       res += "\n";
       return res;
    }
+
+   public Identifier clone( )
+   {
+      return new Identifier(id); 
+   }
 };
 
 
