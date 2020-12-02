@@ -113,9 +113,6 @@ Type ::=   VOID    {: RESULT = new type.Void( ); :}
                        " used in array size but not defined as integer" );
               :}
          | IDENTIFIER : id {: 
-              System.out.println("KEEEK");
-              System.out.println(id.toString());
-              //System.out.println(id.type.toString());
               id.type = new type.Struct(id.id);
               RESULT = id.type; :}
          ;
@@ -131,7 +128,7 @@ Stat  ::=  IF Expr : cond THEN Stat : body
          |
            BEGIN Statlist : statlist END
               {: ast.Tree[] arr = statlist.toArray(new ast.Tree[0]);
-                 RESULT = new ast.Apply("[begin-end]", arr); :}
+                 RESULT = new ast.Apply("[compound]", arr); :}
          |
            PRINT Expr : e
               {: RESULT = new ast.Apply("[print]", e); :}
@@ -146,9 +143,9 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = new ast.Apply("[expr]", e); :}
          |
            Decl : d
-              {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = id; :}
+              {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = new ast.Apply("[decl]", id); :}
          |
-           RETURN
+           RETURN {: RESULT = new ast.Apply("[return]"); :}
            ;
 
 Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst = 
@@ -158,12 +155,12 @@ Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst =
     | Statlist : slst SEMICOLON Stat : s {: slst.add(s); RESULT = slst; :}
       ;
 
-Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("[=]", e1, e2); :}
+Expr ::= Expr2 : e1 ASSIGN Expr2: e2 {: RESULT = new ast.Apply("=", e1, e2); :}
     | Expr2 : e2 {: RESULT = e2; :}
     ;
 
 Expr2 ::= Expr3 : Cond QUESTION Expr3 : True COLON Expr3 : False 
-      {: RESULT = new ast.Apply("[??]", Cond, True, False); :}
+      {: RESULT = new ast.Apply("??", Cond, True, False); :}
       | Expr3 : e3 {: RESULT = e3; :}
       ;
 
@@ -179,44 +176,44 @@ Expr5 ::= NOT Expr5 : e5 {: RESULT = new ast.Apply("??", e5, new ast.Bool(false)
     | Expr6 : e6 {: RESULT = e6; :}
     ;
 
-Expr6 ::= Expr7 : e1 EQ Expr7 : e2 {: RESULT = new ast.Apply("==", e1, e2); :}
-    | Expr7 : e1 NE Expr7 : e2    {: RESULT = new ast.Apply("!=", e1, e2); :}
-    | Expr7 : e1 LT Expr7 : e2     {: RESULT = new ast.Apply("<", e1, e2); :}
-    | Expr7 : e1 GT Expr7 : e2     {: RESULT = new ast.Apply(">", e1, e2); :}
-    | Expr7 : e1 LE Expr7 : e2     {: RESULT = new ast.Apply("<=", e1, e2); :}
-    | Expr7 : e1 GE Expr7 : e2     {: RESULT = new ast.Apply(">=", e1, e2); :}
+Expr6 ::= Expr7 : e1 EQ Expr7 : e2 {: RESULT = new ast.Apply("eq", e1, e2); :}
+    | Expr7 : e1 NE Expr7 : e2    {: RESULT = new ast.Apply("ne", e1, e2); :}
+    | Expr7 : e1 LT Expr7 : e2     {: RESULT = new ast.Apply("lt", e1, e2); :}
+    | Expr7 : e1 GT Expr7 : e2     {: RESULT = new ast.Apply("gt", e1, e2); :}
+    | Expr7 : e1 LE Expr7 : e2     {: RESULT = new ast.Apply("le", e1, e2); :}
+    | Expr7 : e1 GE Expr7 : e2     {: RESULT = new ast.Apply("ge", e1, e2); :}
     | Expr7 : e7                   {: RESULT = e7; :}
     ;
 
-Expr7 ::= Expr7 : e1 ADD Expr8 : e2 {: RESULT = new ast.Apply("+", e1, e2); :}
-    | Expr7 : e1 SUB Expr8 : e2 {: RESULT = new ast.Apply("-", e1, e2); :}
+Expr7 ::= Expr7 : e1 ADD Expr8 : e2 {: RESULT = new ast.Apply("add", e1, e2); :}
+    | Expr7 : e1 SUB Expr8 : e2 {: RESULT = new ast.Apply("sub", e1, e2); :}
     | Expr8 : e8 {: RESULT = e8; :}
     ;
 
-Expr8 ::= Expr8 : e1 MUL Expr9 : e2 {: RESULT = new ast.Apply("*", e1, e2); :}
-    | Expr8 : e1 TRUEDIV Expr9 : e2 {: RESULT = new ast.Apply("/", e1, e2); :}
-    | Expr8 : e1 MODULO Expr9 : e2 {: RESULT = new ast.Apply("%", e1, e2); :}
+Expr8 ::= Expr8 : e1 MUL Expr9 : e2 {: RESULT = new ast.Apply("mul", e1, e2); :}
+    | Expr8 : e1 TRUEDIV Expr9 : e2 {: RESULT = new ast.Apply("div", e1, e2); :}
+    | Expr8 : e1 MODULO Expr9 : e2 {: RESULT = new ast.Apply("mod", e1, e2); :}
     | Expr9 : e9 {: RESULT = e9; :}
     ;
 
-Expr9 ::= SUB Expr9 : e9 {: RESULT = new ast.Apply("-u", e9); :}
+Expr9 ::= SUB Expr9 : e9 {: RESULT = new ast.Apply("neg", e9); :}
     | Expr10 : e10 {: RESULT = e10; :}
     ;
 
-Expr10 ::= MUL Expr10 : e10 {: RESULT = new ast.Apply("*", e10); :}
-    | AMPERSAND Expr10 : e10 {: RESULT = new ast.Apply("&", e10); :}
+Expr10 ::= MUL Expr10 : e10 {: RESULT = new ast.Apply("pntr", e10); :}
+    | AMPERSAND Expr10 : e10 {: RESULT = new ast.Apply("amp", e10); :}
     | Expr11 : e11 {: RESULT = e11; :}
     ;
 
-Expr11 ::= PLUSPLUS Expr12 : e12 {: RESULT = new ast.Apply("ppx", e12); :}
-    | MINUSMINUS Expr12 : e12 {: RESULT = new ast.Apply("mmx", e12); :}
+Expr11 ::= PLUSPLUS Expr12 : e12 {: RESULT = new ast.Apply("[ppx]", e12); :}
+    | MINUSMINUS Expr12 : e12 {: RESULT = new ast.Apply("[mmx]", e12); :}
     | Expr12 : e12 {: RESULT = e12; :}
     ;
 
-Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("xpp", e12); :}
-    | Expr12 : e12 MINUSMINUS          {: RESULT = new ast.Apply("xmm", e12); :}
+Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); :}
+    | Expr12 : e12 MINUSMINUS          {: RESULT = new ast.Apply("[xmm]", e12); :}
     | Expr12 : e12 DOT IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), e12); :}
-    | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), new ast.Apply("*", e12)); :}
+    | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), new ast.Apply("select", e12)); :}
     | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("*", new ast.Apply("+", e12, e)); :}
     | IDENTIFIER : id {: RESULT = id; :}
     | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
