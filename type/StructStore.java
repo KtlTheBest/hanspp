@@ -72,10 +72,19 @@ public class StructStore
    boolean hasfield( java.lang.String structname, java.lang.String fieldname )
    {
       Field[] fields = defs. get( structname );
+      boolean debug = false;
+      if(structname.equals("complex")){
+        System.out.println("DEBUG TIME!!");
+        debug = true;
+      }
       if( fields == null )
          return false;  
       for( int i = 0; i != fields. length; ++ i )
       {
+        if(debug == true){
+          System.out.println(fields[i].f + " - " + fieldname);
+          System.out.println(java.lang.Integer.toString(fields[i].f.length()) + " - " + java.lang.Integer.toString(fieldname.length()));
+        }
          if( fields[i]. f. equals( fieldname ))
             return true;
       }

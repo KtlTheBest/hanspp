@@ -6,7 +6,7 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int PLUSPLUS = 53;
+  public static final int PLUSPLUS = 54;
   public static final int STRUCTDEF = 24;
   public static final int FUNCTION = 23;
   public static final int CHAR = 11;
@@ -15,7 +15,6 @@ public class sym {
   public static final int DOUBLE = 13;
   public static final int INTEGER = 12;
   public static final int ARRAY = 15;
-  public static final int STRINGCONST = 6;
   public static final int NOT = 41;
   public static final int AND = 40;
   public static final int SEMICOLON = 36;
@@ -30,15 +29,16 @@ public class sym {
   public static final int LSQPAR = 30;
   public static final int ASSIGN = 37;
   public static final int IF = 16;
-  public static final int AMPERSAND = 52;
+  public static final int AMPERSAND = 53;
   public static final int DOT = 33;
   public static final int LE = 46;
   public static final int EOF = 0;
-  public static final int MINUSMINUS = 54;
+  public static final int MINUSMINUS = 55;
   public static final int RETURN = 22;
   public static final int RSQPAR = 31;
   public static final int error = 1;
   public static final int MUL = 50;
+  public static final int MODULO = 52;
   public static final int ADD = 48;
   public static final int CONSTANT = 25;
   public static final int VOID = 9;
@@ -54,6 +54,7 @@ public class sym {
   public static final int END = 27;
   public static final int QUESTION = 38;
   public static final int LPAR = 28;
+  public static final int STRING = 6;
   public static final int POINTER = 14;
   public static final int GT = 45;
   public static final int SUB = 49;
@@ -68,7 +69,7 @@ public class sym {
   "CHARCONST",
   "INTEGERCONST",
   "DOUBLECONST",
-  "STRINGCONST",
+  "STRING",
   "POINTERCONST",
   "IDENTIFIER",
   "VOID",
@@ -114,6 +115,7 @@ public class sym {
   "SUB",
   "MUL",
   "TRUEDIV",
+  "MODULO",
   "AMPERSAND",
   "PLUSPLUS",
   "MINUSMINUS"

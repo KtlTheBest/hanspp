@@ -3,6 +3,8 @@ package type;
 
 public class Bool extends Type 
 {
+   public Bool() {}
+
    public boolean isprimitive( ) { return true; }
 
    public int sizeof( StructStore structs ) { return 1; }

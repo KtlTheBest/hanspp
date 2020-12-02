@@ -3,6 +3,8 @@ package type;
 
 public class Double extends Type 
 {
+   public Double() {}
+
    public boolean isprimitive( ) { return true; }
 
    public int sizeof( StructStore structs ) { return 1; }

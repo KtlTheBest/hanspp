@@ -3,6 +3,7 @@ package type;
 
 public class Char extends Type 
 {
+   public Char() {}
 
    public boolean isprimitive( ) { return true; }
 

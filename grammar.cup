@@ -65,7 +65,11 @@ Prog ::=   Prog CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
             {: parsetree. addstruct( i. id, lst ); :}
          | Prog FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON
            Type: rettype Stat: body
-           {: parsetree. addfunction( i. id, params, rettype, body ); :}
+           {:
+             System.out.println("Parsing Function: ");
+             System.out.println("Function name: " + i.id);
+             System.out.println("Return type: " + rettype.toString());
+             parsetree. addfunction( i. id, params, rettype, body ); :}
          |
             {: parsetree = new cflat.Program( ); :}
          ;
@@ -87,6 +91,7 @@ Decllist2 ::= Decl : d
 
 Decl ::= IDENTIFIER:id COLON Type:tp 
          {:
+             System.out.println("Pair: " + id. id + " - " + tp.toString());
              RESULT = new type.Field( id. id, tp );  
          :}
          ;
@@ -143,7 +148,14 @@ Stat  ::=  IF Expr : cond THEN Stat : body
               {: RESULT = new ast.Apply("[expr]", e); :}
          |
            Decl : d
-              {: ast.Identifier id = new ast.Identifier(d.f); id.lr = 'L'; id.type = d.tp; RESULT = new ast.Apply("[decl]", id); :}
+              {: 
+                ast.Identifier id = new ast.Identifier(d.f); 
+                id.lr = 'L'; 
+                id.type = d.tp; 
+                ast.Tree res = new ast.Apply("[decl]", id); 
+                res. type = d.tp;
+                RESULT = res;
+                :}
          |
            RETURN {: RESULT = new ast.Apply("[return]"); :}
            ;
@@ -219,7 +231,7 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); 
     | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
                                                 ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
                                                 RESULT = new ast.Apply(id.toString(), arr); :}
-    | BOOLCONST : boolConst {: RESULT = boolConst; :}
+    | BOOLCONST : boolConst {: boolConst.type = new type.Bool(); RESULT = boolConst; :}
     | CHARCONST : charConst {: RESULT = charConst; :}
     | INTEGERCONST : intConst {: RESULT = intConst; :}
     | DOUBLECONST : doubleConst {: RESULT = doubleConst; :}

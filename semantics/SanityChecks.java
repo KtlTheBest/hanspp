@@ -12,7 +12,7 @@ public abstract class SanityChecks
         java.lang.String context, type.Type tp ) 
       throws Error
     {
-      System.out.println( "checking " + context + " " + tp ); 
+      System.out.println( "From SanityChecks:checkwellformed - checking " + context + " " + tp ); 
 
       // It is a recursive procedure:
 
@@ -110,6 +110,10 @@ public abstract class SanityChecks
         type.Type returntype ) 
       throws Error 
     {
+      if(funcname.equals("fact")){
+        System.out.println("Hello from Mars");
+        System.out.println("From sanity check: " + returntype.toString());
+      }
       checkwellformed(structdefs, funcname, returntype);
       for(int i = 1; i < parameters.length; ++ i){
         for(int j = 0; j < i; ++ j){

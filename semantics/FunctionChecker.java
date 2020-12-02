@@ -49,7 +49,7 @@ public class FunctionChecker
       if( outputlevel >= 2 )
       {
         System.out.println( localvars ); 
-        System.out.println( "checking " + stat );
+        System.out.println( "From FunctionChecker:checkStatement - checking " + stat );
       }
 
       if( stat instanceof ast.Apply )
@@ -72,6 +72,8 @@ public class FunctionChecker
           // We check sanity of the type. If it passes,
           // we declare the variable. Lots of casts unfortunately. 
 
+          
+          System.out.println("Checking from FunctionChecker:checkStatement, expecting [decl]");
           SanityChecks.checkwellformed( prog. structdefs, 
               "function " + funcname, 
               appl. type );
@@ -187,7 +189,7 @@ public class FunctionChecker
       if( outputlevel >= 2 )
       {
         System. out. println( localvars );
-        System. out. println( "checking Expr: " + expr );
+        System. out. println( "From FunctionChecker:checkExpr - checking Expr: " + expr );
       }
 
       if( expr instanceof ast.Identifier )
@@ -315,6 +317,7 @@ public class FunctionChecker
               " has no struct definition" );
         }
 
+        System.out.println("LION: " + structname);
         if( ! prog. structdefs. hasfield( structname, field ))
         {
           throw new Error.checkExpr( "function " + funcname,
@@ -356,7 +359,28 @@ public class FunctionChecker
         if( sub. lr != 'L' )
           throw new Error.checkExpr( "function " + funcname,
               appl, "subtree is not L-value" );
+        
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
 
+        if(!(sub. type instanceof type.Double ||
+             sub. type instanceof type.Integer ||
+             sub. type instanceof type.Char ||
+             sub. type instanceof type.Pointer)){
+          throw new Error.checkExpr( "function " + funcname,
+              appl, "Can't perform " + unary + " on type " + sub. type. toString());
+        }
+
+        ast. Tree res = makeRValue(sub);
+        return res;
+      }
+
+      if(unary.equals("pntr")){
+        type.Type tp = sub. type;
+        sub = makeRValue(sub);
+        
       }
 
         throw new Error.checkExpr( "function " + funcname,
@@ -422,7 +446,7 @@ public class FunctionChecker
         sub2 = convert( sub2, sub1.type );
       }
 
-      ast.Tree res = new ast.Apply(binary, sub1, sub2);
+      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
       res. type = new type.Bool();
       res. lr = 'R';
 
@@ -433,7 +457,7 @@ public class FunctionChecker
         binary. equals( "sub" ) ||
         binary. equals( "mul" ) ||
         binary. equals( "div" ) ||
-        binary. equals( "mod" ))
+        binary. equals( "mod" ) )
     {
       sub1 = makeRValue( sub1 );
       sub2 = makeRValue( sub2 );
@@ -450,9 +474,13 @@ public class FunctionChecker
       if(cost21 < cost12 && cost21 < impossible){
         sub2 = convert( sub2, sub1.type );
         trueType = sub1.type;
+      } else 
+      if(cost12 == impossible && cost21 == impossible){
+        throw new Error.checkExpr("function " + funcname, appl,
+            "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
       }
 
-      ast.Tree res = new ast.Apply(binary, sub1, sub2);
+      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
       res. type = trueType;
       res. lr = 'R';
 
@@ -480,6 +508,23 @@ public class FunctionChecker
         // Fortunately, C does not, so we convert our arguments into
         // Rvalues. 
 
+        sub1 = makeRValue(sub1);
+        sub2 = makeRValue(sub2);
+        sub3 = makeRValue(sub3);
+
+        int toBool = penalty(sub1. type, new type.Bool());
+
+        if(toBool == impossible){
+          throw new Error.checkExpr("function " + funcname, appl, "Cannot convert expression to bool");
+        }
+
+        sub1 = convert(sub1, new type.Bool());
+
+        ast.Apply res = new ast.Apply("??", sub1, sub2, sub3);
+        res.type = new type.Bool();
+        res.lr = 'R';
+
+        return res;
       } 
       throw new Error.checkExpr( "function " + funcname,
           appl, "unknown ternary operator " + ternary );
