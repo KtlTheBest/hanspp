@@ -120,7 +120,7 @@ CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
   if(c == '\\'){
     System.out.println("If KEEK");
     c = x.charAt(1);
-    if(c == '0') c = '\u0000';
+    if(c == '0') return symbol( sym. POINTERCONST, new ast.Pointer(0) );
     if(c == 'b') c = '\b';
     if(c == 'f') c = '\f';
     if(c == 't') c = '\t';
