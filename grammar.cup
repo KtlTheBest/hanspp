@@ -224,7 +224,9 @@ Expr11 ::= PLUSPLUS Expr12 : e12 {: RESULT = new ast.Apply("[ppx]", e12); :}
 
 Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); :}
     | Expr12 : e12 MINUSMINUS          {: RESULT = new ast.Apply("[xmm]", e12); :}
-    | Expr12 : e12 DOT IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), e12); :}
+    | Expr12 : e12 DOT IDENTIFIER : id {: 
+      String str = id.toString().substring(0, id.toString().length() - 1);
+      RESULT = new ast.Select(str, e12); :}
     | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), new ast.Apply("select", e12)); :}
     | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("*", new ast.Apply("+", e12, e)); :}
     | IDENTIFIER : id {: RESULT = id; :}
