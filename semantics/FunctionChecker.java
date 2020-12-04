@@ -421,6 +421,23 @@ public class FunctionChecker
             sub. type);
 
         ast. Tree res = extractTypeFromPointer(sub);
+
+        res.lr = 'L';
+        return res;
+      }
+
+      if(unary.equals("amp")){
+
+        type.Type tp = sub. type;
+
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        ast. Tree res = makeRValue(sub);        
+        res = convert(sub, new type.Pointer(sub.type));
+
         return res;
       }
 
@@ -531,7 +548,7 @@ public class FunctionChecker
               trueType = new type.Pointer(new type.Integer());
             } else
               throw new Error.checkExpr("function " + funcname, appl,
-                "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
+                  "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
           }
       System.out.println("Finished conversion checks");
 
@@ -707,6 +724,19 @@ public class FunctionChecker
     return res;
   }
 
+  public static ast.Tree makeLValue( ast.Tree t )
+  {
+    if( t. lr == 'L' )
+    {
+      ast.Tree res = new ast.Apply( "[load]", t );
+      res. type = t. type;
+      res. lr = 'R';
+      return res;
+    }
+    else
+      return t;
+  }
+
   public static ast.Tree makeRValue( ast.Tree t )
   {
     if( t. lr == 'L' )
@@ -732,7 +762,7 @@ public class FunctionChecker
       ast.Apply res = new ast.Apply( "[conv]", t );
 
       res.type = new type.Pointer( tp ); 
-      res.lr = 'R';
+      res.lr = 'L';
       System.out.println("DOING SOMETHING LIKE R!!!");
       return res; 
     }
