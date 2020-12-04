@@ -357,6 +357,23 @@ public class FunctionChecker
     }
 
 
+  private ast.Tree extractTypeFromPointer(ast.Tree sub){
+    type.Type tp = sub.type;
+
+    if(tp instanceof type.Pointer){
+      type.Pointer pntr = (type.Pointer) tp;
+      type.Type trueType = pntr.tp;
+
+      ast.Apply res = new ast.Apply("[load]", sub);
+      res.type = trueType;
+      if(trueType instanceof type.Pointer) res.lr = 'R';
+      else res.lr = sub.lr;
+      return res; 
+    } else {  
+      return sub;
+    }
+  }
+
   ast.Tree checkUnary( ast.Tree appl, java.lang.String unary,
       ast.Tree sub ) 
       throws Error 
@@ -376,19 +393,19 @@ public class FunctionChecker
         if( sub. lr != 'L' )
           throw new Error.checkExpr( "function " + funcname,
               appl, "subtree is not L-value" );
-        
+
         SanityChecks.checkwellformed(
             prog. structdefs, 
             funcname, 
             sub. type);
 
         if(!(sub. type instanceof type.Double ||
-             sub. type instanceof type.Integer ||
-             sub. type instanceof type.Char ||
-             sub. type instanceof type.Pointer)){
+              sub. type instanceof type.Integer ||
+              sub. type instanceof type.Char ||
+              sub. type instanceof type.Pointer)){
           throw new Error.checkExpr( "function " + funcname,
               appl, "Can't perform " + unary + " on type " + sub. type. toString());
-        }
+              }
 
         ast. Tree res = makeRValue(sub);
         return res;
@@ -397,11 +414,18 @@ public class FunctionChecker
       if(unary.equals("pntr")){
         type.Type tp = sub. type;
         sub = makeRValue(sub);
-        
+
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        ast. Tree res = extractTypeFromPointer(sub);
+        return res;
       }
 
-        throw new Error.checkExpr( "function " + funcname,
-            appl, "unknown unary operator " + unary );
+      throw new Error.checkExpr( "function " + funcname,
+          appl, "unknown unary operator " + unary );
 
     }
 
@@ -462,9 +486,9 @@ public class FunctionChecker
       if(cost12 < cost21 && cost12 < impossible){
         sub1 = convert( sub1, sub2.type );
       } else
-      if(cost21 < cost12 && cost21 < impossible){
-        sub2 = convert( sub2, sub1.type );
-      }
+        if(cost21 < cost12 && cost21 < impossible){
+          sub2 = convert( sub2, sub1.type );
+        }
 
       ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
       res. type = new type.Bool();
@@ -483,7 +507,7 @@ public class FunctionChecker
       sub1 = makeRValue( sub1 );
       sub2 = makeRValue( sub2 );
       System.out.println("Finished making RVal");
-      
+
       System.out.println("Starting penalty");
       int cost12 = penalty( sub1.type, sub2.type );
       int cost21 = penalty( sub2.type, sub1.type );
@@ -498,14 +522,14 @@ public class FunctionChecker
         sub1 = convert( sub1, sub2.type );
         trueType = sub2.type;
       } else
-      if(cost21 < cost12 && cost21 < impossible){
-        sub2 = convert( sub2, sub1.type );
-        trueType = sub1.type;
-      } else 
-      if(cost12 == impossible && cost21 == impossible){
-        throw new Error.checkExpr("function " + funcname, appl,
-            "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
-      }
+        if(cost21 < cost12 && cost21 < impossible){
+          sub2 = convert( sub2, sub1.type );
+          trueType = sub1.type;
+        } else 
+          if(cost12 == impossible && cost21 == impossible){
+            throw new Error.checkExpr("function " + funcname, appl,
+                "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
+          }
       System.out.println("Finished conversion checks");
 
       System.out.println("Starting constructing tree node");
