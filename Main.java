@@ -38,6 +38,12 @@ class Main
             cupparser. parsetree. structdefs, name, 
             func. parameters, func.returntype )); 
 
+      cupparser. parsetree. funcdefs. forEach( 
+          ( name, func ) -> {
+            System.out.println("FUNCTION PRIIIIIINT!! " + name);
+            System.out.println(func);
+          }); 
+
       System.out.println("Done with the first sanity check");
 
       cupparser. parsetree. funcdefs. forEach(

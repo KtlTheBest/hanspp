@@ -110,6 +110,7 @@ public abstract class SanityChecks
         type.Type returntype ) 
       throws Error 
     {
+      System.out.println("Checking function in checkFunctionHeader: " + funcname);
       if(funcname.equals("fact")){
         System.out.println("Hello from Mars");
         System.out.println("From sanity check: " + returntype.toString());

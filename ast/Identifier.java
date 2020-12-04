@@ -19,10 +19,11 @@ public class Identifier extends Tree
 
    public int treesize( ) { return 1; }
 
-   public java.lang.String toString( int depth )
-   {
+   public java.lang.String toString( int depth ) {
       java.lang.String res = indentation( depth ) + id;
-      res += super. typetoString( );
+      System.out.println("!!" + res + "!!");
+      if(super. typetoString() != null)
+        res += super. typetoString( );
       res += "\n";
       return res;
    }

@@ -1553,7 +1553,7 @@ class CUP$Parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		ast.Identifier id = (ast.Identifier)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new ast.Select(id.toString(), e12); 
+		 RESULT = new ast.Select(id.id, e12); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Expr12",19, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1568,7 +1568,7 @@ class CUP$Parser$actions {
 		int idleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int idright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		ast.Identifier id = (ast.Identifier)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new ast.Select(id.toString(), new ast.Apply("select", e12)); 
+		 RESULT = new ast.Select(id.id, new ast.Apply("select", e12)); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Expr12",19, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -1612,7 +1612,20 @@ class CUP$Parser$actions {
 		java.util.ArrayList<ast.Tree> lst = (java.util.ArrayList<ast.Tree>)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		 
                                                 ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
-                                                RESULT = new ast.Apply(id.toString(), arr); 
+                                                System.out.println("Function: " + id.id);
+                                                if(arr == null){
+                                                  System.out.println("Araylym says: null");
+                                                } else {
+                                                  System.out.println("Araylym says: not null");
+                                                  for(ast.Tree x : arr){
+                                                    if(x == null){
+                                                      System.out.println("null");
+                                                    } else {
+                                                      System.out.println(x);
+                                                    }
+                                                  }
+                                                }
+                                                RESULT = new ast.Apply(id. id, arr); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("Expr12",19, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-3)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

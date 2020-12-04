@@ -224,15 +224,26 @@ Expr11 ::= PLUSPLUS Expr12 : e12 {: RESULT = new ast.Apply("[ppx]", e12); :}
 
 Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); :}
     | Expr12 : e12 MINUSMINUS          {: RESULT = new ast.Apply("[xmm]", e12); :}
-    | Expr12 : e12 DOT IDENTIFIER : id {: 
-      String str = id.toString().substring(0, id.toString().length() - 1);
-      RESULT = new ast.Select(str, e12); :}
-    | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.toString(), new ast.Apply("select", e12)); :}
+    | Expr12 : e12 DOT IDENTIFIER : id {: RESULT = new ast.Select(id.id, e12); :}
+    | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.id, new ast.Apply("select", e12)); :}
     | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("*", new ast.Apply("+", e12, e)); :}
     | IDENTIFIER : id {: RESULT = id; :}
     | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
                                                 ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
-                                                RESULT = new ast.Apply(id.toString(), arr); :}
+                                                System.out.println("Function: " + id.id);
+                                                if(arr == null){
+                                                  System.out.println("Araylym says: null");
+                                                } else {
+                                                  System.out.println("Araylym says: not null");
+                                                  for(ast.Tree x : arr){
+                                                    if(x == null){
+                                                      System.out.println("null");
+                                                    } else {
+                                                      System.out.println(x);
+                                                    }
+                                                  }
+                                                }
+                                                RESULT = new ast.Apply(id. id, arr); :}
     | BOOLCONST : boolConst {: boolConst.type = new type.Bool(); RESULT = boolConst; :}
     | CHARCONST : charConst {: RESULT = charConst; :}
     | INTEGERCONST : intConst {: RESULT = intConst; :}
