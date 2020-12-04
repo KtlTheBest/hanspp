@@ -527,7 +527,10 @@ public class FunctionChecker
           trueType = sub1.type;
         } else 
           if(cost12 == impossible && cost21 == impossible){
-            throw new Error.checkExpr("function " + funcname, appl,
+            if(sub1.type instanceof type.Pointer && sub2.type instanceof type.Integer){
+              trueType = new type.Pointer(new type.Integer());
+            } else
+              throw new Error.checkExpr("function " + funcname, appl,
                 "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
           }
       System.out.println("Finished conversion checks");

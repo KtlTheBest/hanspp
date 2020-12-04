@@ -226,7 +226,7 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); 
     | Expr12 : e12 MINUSMINUS          {: RESULT = new ast.Apply("[xmm]", e12); :}
     | Expr12 : e12 DOT IDENTIFIER : id {: RESULT = new ast.Select(id.id, e12); :}
     | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.id, new ast.Apply("pntr", e12)); :}
-    | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("*", new ast.Apply("add", e12, e)); :}
+    | Expr12 : e12 LSQPAR Expr : e RSQPAR {: RESULT = new ast.Apply("pntr", new ast.Apply("add", e12, e)); :}
     | IDENTIFIER : id {: RESULT = id; :}
     | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
                                                 ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
