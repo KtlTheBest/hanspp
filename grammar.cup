@@ -66,9 +66,6 @@ Prog ::=   Prog CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
          | Prog FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON
            Type: rettype Stat: body
            {:
-             System.out.println("Parsing Function: ");
-             System.out.println("Function name: " + i.id);
-             System.out.println("Return type: " + rettype.toString());
              parsetree. addfunction( i. id, params, rettype, body ); :}
          |
             {: parsetree = new cflat.Program( ); :}
@@ -91,7 +88,6 @@ Decllist2 ::= Decl : d
 
 Decl ::= IDENTIFIER:id COLON Type:tp 
          {:
-             System.out.println("Pair: " + id. id + " - " + tp.toString());
              RESULT = new type.Field( id. id, tp );  
          :}
          ;
@@ -230,19 +226,6 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); 
     | IDENTIFIER : id {: RESULT = id; :}
     | IDENTIFIER : id LPAR Exprlist : lst RPAR {: 
                                                 ast.Tree[] arr = lst.toArray(new ast.Tree[0]);
-                                                System.out.println("Function: " + id.id);
-                                                if(arr == null){
-                                                  System.out.println("Araylym says: null");
-                                                } else {
-                                                  System.out.println("Araylym says: not null");
-                                                  for(ast.Tree x : arr){
-                                                    if(x == null){
-                                                      System.out.println("null");
-                                                    } else {
-                                                      System.out.println(x);
-                                                    }
-                                                  }
-                                                }
                                                 RESULT = new ast.Apply(id. id, arr); :}
     | BOOLCONST : boolConst {: boolConst.type = new type.Bool(); RESULT = boolConst; :}
     | CHARCONST : charConst {: RESULT = charConst; :}

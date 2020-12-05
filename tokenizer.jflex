@@ -114,7 +114,6 @@ CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
 {DoubleConst}  { return symbol( sym.DOUBLECONST, new ast.Double(new java.lang.Double( yytext() ) ) ); }
 {QuotedString}  { String x = yytext(); return symbol( sym.STRING, new ast.String(new java.lang.String( x.substring(1, x.length() - 1) ) ) ); }
 {CharConst}  { 
-  System.out.println("Hello KEK");
   String x = yytext();
   char c = x.charAt(0);
   if(c == '\\'){

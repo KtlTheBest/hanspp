@@ -15,8 +15,6 @@ class Main
 
       System.out. println( cupparser. parsetree ); 
 
-      cupparser. parsetree.printstructs();
-
       System. out. println( "Starting Semantic Analysis" ); 
 
       cupparser. parsetree. structdefs. forEach( 
@@ -37,14 +35,6 @@ class Main
           semantics.SanityChecks.checkFunctionHeader( 
             cupparser. parsetree. structdefs, name, 
             func. parameters, func.returntype )); 
-
-      cupparser. parsetree. funcdefs. forEach( 
-          ( name, func ) -> {
-            System.out.println("FUNCTION PRIIIIIINT!! " + name);
-            System.out.println(func);
-          }); 
-
-      System.out.println("Done with the first sanity check");
 
       cupparser. parsetree. funcdefs. forEach(
           ( name, funcdef ) ->

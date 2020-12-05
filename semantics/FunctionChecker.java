@@ -49,7 +49,7 @@ public class FunctionChecker
       if( outputlevel >= 2 )
       {
         System.out.println( localvars ); 
-        System.out.println( "From FunctionChecker:checkStatement - checking " + stat );
+        System.out.println( "checkStatement - checking " + stat );
       }
 
       if( stat instanceof ast.Apply )
@@ -73,7 +73,6 @@ public class FunctionChecker
           // we declare the variable. Lots of casts unfortunately. 
 
           
-          System.out.println("Checking from FunctionChecker:checkStatement, expecting [decl]");
           SanityChecks.checkwellformed( prog. structdefs, 
               "function " + funcname, 
               appl. type );
@@ -85,8 +84,6 @@ public class FunctionChecker
         if( appl. function. equals( "[expr]" ) &&
             appl. sub. length == 1 )
         {
-          System.out.println("Hello from Zhibek:");
-          System.out.println(stat);
           appl. sub[0] = checkExpr( appl. sub[0] ); 
           return; 
         }
@@ -138,10 +135,7 @@ public class FunctionChecker
         if( appl. function. equals( "[return]" ) &&
             appl. sub. length == 1 )
         {
-          System.out.println("Hello from Zhibek:");
-          System.out.println(stat);
           ast.Tree sub = checkExpr( appl. sub[0] ); 
-          System.out.println(sub);
 
           type.Type neededtype = localvars. gettype( "[retvar]" );
           if( penalty( sub. type, neededtype ) >= impossible )
@@ -196,9 +190,6 @@ public class FunctionChecker
         System. out. println( localvars );
         System. out. println( "From FunctionChecker:checkExpr - checking Expr: " + expr );
       }
-
-      System.out.println("Hello from Zhanel:");
-      System.out.println(expr);
 
       if( expr instanceof ast.Identifier )
       {
@@ -276,9 +267,7 @@ public class FunctionChecker
       if( expr instanceof ast.Apply )
       {
 
-        System.out.println("Hello from Zhanel from ast.Apply:");
         ast.Apply appl = (ast.Apply) expr;  
-        System.out.println(appl);
 
         cflat.Program.FuncDef 
           definition = prog. funcdefs. get( appl. function );
@@ -291,8 +280,6 @@ public class FunctionChecker
               checkExpr( appl.sub[0] ));
 
         if( appl. sub. length == 2 ) {
-          System.out.println("DYNYA " + appl.sub[0]);
-          System.out.println("DYNYA " + appl.sub[1]);
           return checkBinary( appl, appl. function, 
               checkExpr( appl.sub[0] ),
               checkExpr( appl.sub[1] ));
@@ -331,7 +318,6 @@ public class FunctionChecker
               " has no struct definition" );
         }
 
-        System.out.println("LION: " + structname);
         if( ! prog. structdefs. hasfield( structname, field ))
         {
           throw new Error.checkExpr( "function " + funcname,
@@ -343,12 +329,10 @@ public class FunctionChecker
         int position = prog.structdefs.position( structname, field );
         type.Type tp = prog.structdefs.fieldtype( structname, position );
 
-        System.out.println("Still here");
-
         ast.Select result = new ast.Select( field, sub );
         result. type = tp;
         result. lr = sub. lr; 
-        System.out.println("Still here2");
+
         return array2pointer( result );  
       }
 
@@ -451,9 +435,6 @@ public class FunctionChecker
       ast.Tree sub1, ast.Tree sub2 )
   {
 
-    System.out.println("Hello from Kurmankul: ");
-    System.out.println(appl);
-
     if( outputlevel >= 2 )
     {
       System. out. println( "binary " + appl ); 
@@ -520,21 +501,14 @@ public class FunctionChecker
         binary. equals( "div" ) ||
         binary. equals( "mod" ) )
     {
-      System.out.println("Starting making RVal");
       sub1 = makeRValue( sub1 );
       sub2 = makeRValue( sub2 );
-      System.out.println("Finished making RVal");
 
-      System.out.println("Starting penalty");
       int cost12 = penalty( sub1.type, sub2.type );
       int cost21 = penalty( sub2.type, sub1.type );
-      System.out.println("Finished penalty");
 
       type.Type trueType = sub1.type;
 
-      System.out.println("Starting conversion checks");
-      System.out.println("cost12: " + cost12);
-      System.out.println("cost21: " + cost21);
       if(cost12 < cost21 && cost12 < impossible){
         sub1 = convert( sub1, sub2.type );
         trueType = sub2.type;
@@ -550,13 +524,10 @@ public class FunctionChecker
               throw new Error.checkExpr("function " + funcname, appl,
                   "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
           }
-      System.out.println("Finished conversion checks");
 
-      System.out.println("Starting constructing tree node");
       ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
       res. type = trueType;
       res. lr = 'R';
-      System.out.println("Finished constructing tree node");
 
       return res;
     } 
@@ -622,35 +593,20 @@ public class FunctionChecker
 
       java.util.ArrayList< ast.Tree > checked = new java.util.ArrayList<> ( ); 
 
-      System.out.println("Starting arguments check...");
       for( int i = 0; i != arguments. length; ++ i )
       {
-        System.out.println("Argument " + i + ":");
-        System.out.println(arguments[i]);
         ast.Tree arg = checkExpr( arguments[i] );
-        System.out.println("Checked expression: ");
-        System.out.println(arg);
 
-        System.out.println("Trying to get needed type");
         type.Type needed = definition. parameters[i]. tp;
-        System.out.println("Got needed type: " + needed);
 
-        System.out.println("Starting if check");
         if( penalty( arg. type, needed ) >= impossible )
           throw new Error.checkExpr( "function " + funcname, appl,
               "type " + arg. type + 
               " of argument nr" + (i+1) + " not convertible to " + needed ); 
-        System.out.println("Finished if check");
 
-        System.out.println("Trying to make Rvalue");
         arg = makeRValue( arg ); 
-        System.out.println("Finished making Rvalue");
-
-        System.out.println("Trying to make convert");
         arg = convert( arg, needed ); 
-        System.out.println("Finished making convert");
 
-        System.out.println("Trying to add");
         checked. add( arg );
       }
 
@@ -679,11 +635,7 @@ public class FunctionChecker
 
   public static int penalty( type.Type from, type.Type to )
   {
-    System.out.println("Hello from penalty check");
-    System.out.println(from);
-    System.out.println(to);
     if( from. equals( to )){
-      System.out.println("They are equal!");
       return 0;
     }
 
@@ -763,11 +715,9 @@ public class FunctionChecker
 
       res.type = new type.Pointer( tp ); 
       res.lr = 'L';
-      System.out.println("DOING SOMETHING LIKE R!!!");
       return res; 
     }
     else {
-      System.out.println("DOING SOMETHING !!!");
       return t;
     }
   }
