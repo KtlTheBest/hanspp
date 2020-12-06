@@ -11,9 +11,9 @@ public class Array extends Type
 
    public boolean isprimitive( ) { return false; }
 
-   public int sizeof( StructStore structs ) 
+   public int memSize( StructStore structdefs ) 
    { 
-      return s * tp. sizeof( structs ); 
+      return s * tp. memSize( structdefs ); 
    } 
 
    public java.lang.String toString( ) 

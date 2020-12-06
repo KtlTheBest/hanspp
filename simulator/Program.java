@@ -41,11 +41,12 @@ public class Program
    {
       FunctionBody body = funcdefs. get( funcname ); 
       if( body == null )
-         throw new Error( funcname, "function does not exist", null, 0 ); 
+         throw new Error( funcname, 
+                          "tried to call but does not exist", null, 0 ); 
 
       // Allocate space in memory for the return type:
   
-      int s = rettype. sizeof( structdefs );
+      int s = rettype. memSize( structdefs );
       Memory.Pointer res = mem. allocate(s);
 
       // Actually, we don't need partypes. We use it only for checking.
@@ -54,7 +55,7 @@ public class Program
 
       s = 0;
       for( int par = 0; par != partypes. length; ++ par )
-         s += partypes[ par ]. sizeof( structdefs );
+         s += partypes[ par ]. memSize( structdefs );
 
       if( parvalues. length != s ) 
          throw new Error( "run( )", 
@@ -77,14 +78,23 @@ public class Program
 
       while( ! statestack. isEmpty( )) 
       {
-         Instruction ins = 
-            statestack. peek( ). position. block. get( 
-                         statestack. peek( ). position. i );
+         State topstate = statestack. peek( ); 
+            // State on top of the stack. That's where we currently are.
+ 
+         if( topstate. position. i >= topstate. position. block. size( ))
+            throw new Error( topstate. position. funcname,
+                             "fell over the end of the block",
+                             topstate. position. blockname,
+                             topstate. position. i );
+
+
+         Instruction ins = topstate. position. block. get( 
+                               topstate. position. i );
 
          if( statestack. peek( ). tracing ) 
          {
-            System.out.println( "(level " + ( statestack. size( ) - 1 ) + ") " );
-            System.out.println( statestack. peek( )); 
+            System.out.println( "(level " + ( statestack. size() - 1 ) + ") " );
+            System.out.println( topstate ); 
             System.out.println( mem ); 
             System. out. println( ins );
 
@@ -99,9 +109,10 @@ public class Program
             if( inp. equals( "n" ) || inp. equals( "N" ))
                statestack. peek( ). tracing = false; 
          } 
-         ++ statestack. peek( ). position. i;
+         ++ topstate. position. i;
          ins. exec( structdefs, this, mem, statestack );
       }
+      System.out.println( "\n" );
       System.out.println( "The computation ended peacefully" ); 
       System.out.println( mem ); 
    }

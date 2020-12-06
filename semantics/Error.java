@@ -7,7 +7,7 @@ package semantics;
 // information that you want to put in the message, depends on the
 // place where it occurs, much more than on its cause.
 
-public class Error extends java.lang.Error
+public class Error extends java.lang.Exception
 {
    String context;
    String problem;

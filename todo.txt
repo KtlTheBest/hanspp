@@ -1,0 +1,27 @@
+
+- Make sure that class Memory.Pointer has a null pointer.
+  Check that it works well (crashes when it is used.)
+  Add errors to the pointer type.
+
+- Code block operations. Substitution on code blocks.
+   (Needed for translation) 
+
+- Test an array example. 
+
+- add a primitive print operator, add a printstring operator. 
+   (Not realistic but useful.)  
+
+- Allow for global variables? We decided not. 
+
+- conv should become a unary operation. Implement generic unary operation.
+
+- Check that the simulator works with SSA. (done) 
+
+- Reconsider the implementation of VarStore. Maybe it should not compute 
+  sizes of types by itself.  
+
+- Add a for loop, add a revfor( ) loop. Translate them into 
+  while loops in the translateStatement( ).
+
+- Explain the definitions, that we are not using them.
+

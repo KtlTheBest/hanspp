@@ -4,7 +4,6 @@ package simulator;
 public class Examples
 {
 
-
    static public void addfact( Program prog )
    {
       FunctionBody fact = prog. create( "fact" );
@@ -12,7 +11,6 @@ public class Examples
       Block block = fact.create( "entry" );
 
       block. add(
-         new Instruction.Trace( ),  
          new Instruction.Alloc( "R_", new type.Double( )),
          new Instruction.Variable( "R0", 
                          new type.Pointer( new type.Double( ))), 
@@ -223,76 +221,37 @@ public class Examples
 
    }
 
-   static public void addcomplexsum( Program prog )
+   static public void addbasictests( Program prog )
    {
-      FunctionBody fact = prog. create( "complexsum" );
+      FunctionBody fact = prog. create( "basictests" );
 
       Block block = fact.create( "entry" );
 
       block. add(
-         new Instruction.Alloc( "R0", new type.Struct( "complex" )), 
-         new Instruction.Variable( "R1",
-                   new type.Pointer( new type. Struct( "complex" )),
-                   new type.Struct( "complex" )),
-         new Instruction.Variable( "R2",
-                   new type.Pointer( new type.Struct( "complex" )),
-                   new type.Struct( "complex" ),
-                   new type.Struct( "complex" )),
-
-         new Instruction.Comment( "Add the real components:" ),
-
-         new Instruction.Constant( "R3",
-                   new java.lang.Integer(0), 
-                   new type.Integer( )),
-
-         new Instruction.Binary( "add", "R4",
-                   new type.Pointer( new type.Double( )),
-                   "R1", "R3" ),
-         new Instruction.Binary( "add", "R5",
-                   new type.Pointer( new type.Double( )),
-                   "R2", "R3" ),
-
-         new Instruction.Load( "R6", new type.Double( ), "R4" ), 
-         new Instruction.Load( "R7", new type.Double( ), "R5" ),
-         new Instruction.Binary( "add", "R8", new type.Double( ), 
-                                 "R6", "R7" ),
-         new Instruction.Binary( "add", "R9", 
-                    new type.Pointer( new type.Double( )), "R0", "R3" ), 
-         new Instruction.Store( "R8", "R9" ), 
-
-         new Instruction.Comment( "Add the imaginary components:" ), 
-
-         new Instruction.Trace( ), 
-         new Instruction.Constant( "R10",
-                   new java.lang.Integer(1),
-                   new type.Integer( )),
-
-         new Instruction.Binary( "add", "R11",
-                   new type.Pointer( new type.Double( )),
-                   "R1", "R10" ),
-         new Instruction.Binary( "add", "R12",
-                   new type.Pointer( new type.Double( )),
-                   "R2", "R10" ),
-
-         new Instruction.Load( "R13", new type.Double( ), "R11" ),
-         new Instruction.Load( "R14", new type.Double( ), "R12" ),
-         new Instruction.Binary( "add", "R15", new type.Double( ),
-                                 "R13", "R14" ),
-         new Instruction.Binary( "add", "R16",
-                    new type.Pointer( new type.Double( )), "R0", "R10" ),
-         new Instruction.Store( "R15", "R16" ),
-
-         new Instruction.Variable( "R17", 
-                new type.Pointer( new type.Struct( "complex" )), 
-                new type.Struct( "complex" ), 
-                new type.Struct( "complex" ),
-                new type.Struct( "complex" )),
-
-         new Instruction.Memcopy( "R0", "R17" ), 
-         new Instruction.Dealloc( 
-                   new type.Struct( "complex" ), 
-                   new type.Struct( "complex" ),
+         new Instruction.Alloc( "R0", new type.Struct( "teststruct" )), 
+         new Instruction.Alloc( "R1", new type.Struct( "complex" )), 
+         new Instruction.Alloc( "R2", new type.Struct( "teststruct" )), 
+         new Instruction.Alloc( "R3", new type.Double( )),
+         new Instruction.Variable( "R4",
+                   new type.Pointer( new type.Struct( "teststruct" )),
+                   new type.Double( ), 
+                   new type.Struct( "teststruct" ),
                    new type.Struct( "complex" )), 
+
+         new Instruction.Constant( "R5", new java.lang.Integer(0),
+                                         new type.Integer( )), 
+         new Instruction.Trace( ),
+
+         new Instruction.Binary( "add", "R6",
+                new type.Pointer( new type.Array( 10, new type.Struct( "complex" )) ), "R4", "R5" ),
+
+         new Instruction.Constant( "R7", new java.lang.Integer(2),
+                                         new type.Integer( )), 
+
+         new Instruction.Binary( "add", "R8",
+                new type.Pointer( new type.Struct( "complex" )), 
+                  "R6", "R7" ),
+         new Instruction.NewLine( ),
 
          new Instruction.Return( )
       );

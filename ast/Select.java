@@ -6,6 +6,7 @@ package ast;
 public class Select extends Tree
 {
    public java.lang.String field;     // Field that we want to select.
+   public int index;                  // -1 if we don't know it. 
    public Tree sub;
 
    public int treesize( )
@@ -16,6 +17,7 @@ public class Select extends Tree
    public Select( java.lang.String field, Tree sub )
    {
       this. field = field; 
+      this. index = -1; 
       this. sub = sub;
    }
 
@@ -28,6 +30,7 @@ public class Select extends Tree
       StringBuilder out = new StringBuilder( ); 
       out. append( indentation( depth )); 
       out. append( "select " + field ); 
+      if( index >= 0 ) out. append( "/" + index ); 
       out. append( typetoString( ));
       out. append( "\n" );
  

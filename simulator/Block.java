@@ -25,6 +25,11 @@ public class Block
       return instructions. get(i);
    }
 
+   public int size( ) 
+   {
+      return instructions. size( ); 
+   }
+
    public java.lang.String toString( java.lang.String prefix )
    {
       java.lang.StringBuilder result = new java.lang.StringBuilder( ); 

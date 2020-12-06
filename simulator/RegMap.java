@@ -128,7 +128,7 @@ public class RegMap
          -- i; 
          res += ( regs.get(i) + " = " + valtypes.get(i) ); 
          if( i != 0 )
-            res += ", ";
+            res += ",   ";
       }
       return res; 
    }

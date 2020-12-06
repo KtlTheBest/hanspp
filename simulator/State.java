@@ -43,9 +43,9 @@ public class State
 
    public java.lang.String toString( ) 
    {
-      java.lang.String res = "State:\n";
+      java.lang.String res = ""; 
       res += position;
-      res += ":\n";
+      res += "\n";
       res += registers;  
       return res; 
    }

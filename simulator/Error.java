@@ -21,10 +21,17 @@ public class Error extends Exception
 
    public String toString( )
    {
-      java.lang.String res = "in function " + funcname + ":  ";
+      java.lang.String res = ""; 
+      if( blockname == null ) 
+      {
+         res = "function " + funcname + ":  ";
+      }
+      else
+      {
+         res = "position " + funcname + "." +
+                             blockname + "[" + i + "] :  ";
+      }
       res += cause;
-      if( blockname != null )
-         res += " at position " + blockname + "[" + i + "]"; 
       return res;  
    }
 };

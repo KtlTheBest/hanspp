@@ -10,7 +10,7 @@ public class Pointer extends Type
 
    public boolean isprimitive( ) { return false; }
 
-   public int sizeof( StructStore structs ) 
+   public int memSize( StructStore structdefs ) 
       { return 1; } 
 
    public java.lang.String toString( ) 

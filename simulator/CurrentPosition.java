@@ -25,7 +25,7 @@ public class CurrentPosition
 
    public java.lang.String toString( ) 
    {
-      return funcname + ":" + blockname + "[" + i + "]";
+      return "Position:  " + funcname + ":" + blockname + "[" + i + "]";
    }
 }
 

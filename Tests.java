@@ -41,40 +41,42 @@ class Tests
    {
       type.StructStore structs = new type.StructStore( );
 
-      structs. insert( "struct1", new type.Field[] 
-         { new type.Field( "f1", new type.Struct( "list" ) ),
-           new type.Field( "f2", new type.Char( )),
-           new type.Field( "f3", new type.Double( )),
-           new type.Field( "f4", new type.Integer( )),
-           new type.Field( "f5", new type.Double( )),
-           new type.Field( "f6", new type.Pointer(
-                       new type.Array( 20, new type.Struct( "x" )))) } );
+      structs. put( "struct1", new type.FieldArray(
+           new type.FieldArray.Field( "f1", new type.Struct( "list" ) ),
+           new type.FieldArray.Field( "f2", new type.Char( )),
+           new type.FieldArray.Field( "f3", new type.Double( )),
+           new type.FieldArray.Field( "f4", new type.Integer( )),
+           new type.FieldArray.Field( "f5", new type.Double( )),
+           new type.FieldArray.Field( "f6", new type.Pointer(
+                       new type.Array( 20, new type.Struct( "x" )))) ) );
 
-      structs. insert( "list", 
-         new type.Field[] { 
-              new type.Field( "elem", new type.Double( )),
-              new type.Field( "next",
-                 new type.Pointer( new type.Struct( "list" ))) } );
+      structs. put( "list", 
+         new type.FieldArray( 
+              new type.FieldArray.Field( "elem", new type.Double( )),
+              new type.FieldArray.Field( "next",
+                 new type.Pointer( new type.Struct( "list" ))) ) );
 
-      structs. insert( "complex",
-         new type.Field[] {
-              new type.Field( "re", new type.Double( )),
-              new type.Field( "im", new type.Double( )) } ); 
+      structs. put( "complex",
+         new type.FieldArray(
+              new type.FieldArray.Field( "re", new type.Double( )),
+              new type.FieldArray.Field( "im", new type.Double( )) ) ); 
          
       System. out. println( structs );
-      System. out. println( structs. fieldtype( "struct1", 0 ));
 
-      semantic.VarStore vars = new semantic.VarStore( ); 
-      vars. push( "c1", structs, new type.Struct( "complex" ));
-      vars. push( "d1", structs, new type.Double( ));
-      vars. push( "l1", structs, new type.Struct( "list" ));
-      vars. push( "ll", structs, new type.Array(10, new type.Struct( "list" )));       
-      vars. push( "d1", structs, new type.Integer( )); 
+      semantics.VarStack vars = new semantics.VarStack( ); 
+      vars. push( "c1", 2, new type.Struct( "complex" ));
+      vars. push( "d1", 1, new type.Double( ));
+      vars. push( "l1", 2, new type.Struct( "list" ));
+      vars. push( "ll", 20, new type.Array(10, new type.Struct( "list" )));       
+      vars. push( "d1", 1, new type.Integer( )); 
       vars. restore(3); 
       System.out.println( vars );
-      System.out.println( vars. contains( "d1" ));
-      System.out.println( vars. currentoffset( "d1" ));
-      System.out.println( vars. gettype( "d1" ));
+      int i = vars. getIndex( "d1" ); 
+      if( i < vars. nrVariables( ))
+      {
+         System.out.println( vars. getOffset( i ));
+         System.out.println( vars. getType( i ));
+      }
    }
 
    
@@ -84,23 +86,29 @@ class Tests
       simulator.Program prog = new simulator.Program( );
 
       type.StructStore structs = new type.StructStore( );
-      structs. insert( "list",
-         new type.Field[] {
-              new type.Field( "elem", new type.Double( )),
-              new type.Field( "next",
-                 new type.Pointer( new type.Struct( "list" ))) } );
+      structs. put( "list",
+         new type.FieldArray(
+              new type.FieldArray.Field( "elem", new type.Double( )),
+              new type.FieldArray.Field( "next",
+                 new type.Pointer( new type.Struct( "list" ))) ) );
 
-      structs. insert( "complex",
-         new type.Field[] {
-              new type.Field( "re", new type.Double( )),
-              new type.Field( "im", new type.Double( )) } );
+      structs. put( "complex",
+         new type.FieldArray(
+              new type.FieldArray.Field( "re", new type.Double( )),
+              new type.FieldArray.Field( "im", new type.Double( )) ) );
+
+      structs. put( "teststruct",
+         new type.FieldArray(
+              new type.FieldArray.Field( "nr1", 
+                 new type.Array( 10, new type.Struct( "complex" ))),
+              new type.FieldArray.Field( "nr2", new type.Double( )) ) );
 
       try 
       {
          // simulator.Examples.addfact( prog );
-         simulator.Examples.addfactrec( prog ); 
+         // simulator.Examples.addfactrec( prog ); 
          // simulator.Examples.addlistsum( prog );
-         // simulator.Examples.addcomplexsum( prog );
+         simulator.Examples.addbasictests( prog );
          System.out.println( prog );
 
          if( true )
@@ -112,7 +120,7 @@ class Tests
                new type.Type[] { new type.Integer( ) };
 
             prog. run( structs, mem, 
-                       "factrec", new type.Double( ), data, types ); 
+                       "basictests", new type.Double( ), data, types ); 
          }
 
          // mem. clear( );

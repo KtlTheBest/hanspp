@@ -1,7 +1,11 @@
 
 package type;
 
-// A struct is always defined through a name. 
+// Struct contains the NAME of a struct, without knowing if 
+// this struct is defined, or what fields it has.
+// A CONCRETE, KNOWN struct is represented by FieldArray. 
+// In order to get the FieldArray from a name,
+// call getFields( ) in StructStore.
 
 public class Struct extends Type 
 {
@@ -14,9 +18,12 @@ public class Struct extends Type
 
    public boolean isprimitive( ) { return false; }
 
-   public int sizeof( StructStore structs ) 
+   public int memSize( StructStore structdefs ) 
    { 
-      return structs. sizeof( name );
+      FieldArray def = structdefs. get( name );
+      if( def == null ) 
+         throw new UndeclaredError( "struct", name ); 
+      return def. memSize( structdefs );
    }
 
    public java.lang.String toString( ) 

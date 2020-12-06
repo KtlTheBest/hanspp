@@ -3,11 +3,9 @@ package type;
 
 public class Void extends Type 
 {
-   public Void() {}
-
    public boolean isprimitive( ) { return true; }
 
-   public int sizeof( StructStore structs ) { return 0; }
+   public int memSize( StructStore structdefs ) { return 0; }
 
    public java.lang.String toString( ) 
       { return "Void"; }

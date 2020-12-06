@@ -1,5 +1,4 @@
 
-constant b = false;
 constant i = 44;
 constant pi = 3.141592653589793;
 
@@ -21,7 +20,6 @@ begin
    return sum
 end
 
-
 function complex( re : double, im : double ) : complex
 begin
    res : complex;
@@ -30,8 +28,21 @@ begin
    return res
 end
 
+function four( n1 : integer, n2 : integer, 
+               n3 : integer, n4 : integer ) : integer
+begin
+   return n1 + n2 + n3 + n4
+end
+
+function printcomplex( c : complex ) : void
+begin
+   print "complex: "; print c.re; print ", "; print c.im; newline; 
+   return
+end
+
 function complexsum( c1 : complex, c2 : complex ) : complex
    return complex( c1. re + c2. re, c1. im + c2. im ) 
+
 
 function fact( n : integer ) : double
 begin
@@ -45,12 +56,19 @@ begin
    return res 
 end
 
+function factrec( n : integer ) : double
+begin
+   if n == 0 then
+      return 1
+   else
+      return n * factrec( n - 1 )
+end
+
+/*
 function length( p : pointer( list ) ) : integer
 begin
    len : integer; 
    len = 1;
-      /* We don't have syntax for immediate initialization */
-      /* of form integer len = 0;                          */
 
    while p != null do
    begin
@@ -68,6 +86,7 @@ end
 
 structdef wronglist = ( first : double, rest : pointer( wronglist2 ));
 structdef wronglist2 = ( first : array( 0, double ), second : array( 4, wronglist )); 
+*/
 
 constant dim = 10;
 
@@ -116,4 +135,92 @@ begin
    print i 
 end
 
+
+function midterm3( ) : void
+begin
+   string : array( 20, char );
+   val : array( 10, integer );
+   i : integer;
+
+   i = 0;                          /* B */ 
+   while i != 10 do                /* C */ 
+   begin
+      val[i] = string[i];          /* D */
+      i ++                         /* E */ 
+   end; 
+
+   i : integer; 
+   a : array( 10, double );
+   a[i] = a[i - 1] + a[ i - 2 ]
+end
+
+
+structdef tree = ( key : double, val : double,
+                   left : pointer( tree ), right : pointer( tree )) ;
+constant NaN = 10000000.0;
+
+function midterm4( ) : double 
+begin
+   d : integer;
+   p : pointer( tree );
+   while p != null do              /* A */
+   begin
+      if d == p -> key then        /* B */ 
+         return p -> val;          /* C */
+      if d < p -> key then
+         p = p -> left             /* D */
+      else
+         p = p -> right 
+   end;
+   return NaN                      /* E */ 
+end
+
+
+function sinegrad( x : double ) : double
+   begin
+      x = x * pi / 180;
+      n : integer; n = 1;
+      sum : double; sum = 0;
+      term : double; term = x; 
+      while sum + term != sum do
+      begin
+         sum = sum + term;
+         term = -term * x * x / ( n + 1 ) / ( n + 2 );
+         n = n + 2
+      end;
+      return sum
+   end
+
+
+structdef complexpair = ( first : complex, second : complex );
+
+function justreturn( pair : complexpair ) : complexpair
+   return pair
+
+
+function negate( c : complex ) : complex
+begin
+   c. re = - c.re;
+   c. im = - c.im;
+   return c
+end
+
+function main( ) : void
+begin
+   pair : complexpair; 
+   pair. first. re = 1;
+   pair. first. im = 100;
+   pair. second. re = 10;
+   pair. second. im = 5;
+   printcomplex( complexsum( negate( justreturn( pair ).first ), 
+                             justreturn( pair ).second ));
+
+   d : double;
+   d = 30; 
+   print "sine of "; print d; print " degrees equals ";
+   print sinegrad( d ); newline ; 
+   return
+end
+ 
 ## this is the end
+

@@ -42,11 +42,9 @@ public class Memory
          return new Pointer( addr + s );
       }
 
-      public int compareTo( Pointer p )
+      int getInteger( )  
       {
-         if( addr < p. addr ) return -1;
-         if( addr > p. addr ) return 1;
-         return 0;
+         return addr;
       }
    }
 
@@ -65,6 +63,11 @@ public class Memory
          mem. add( null );
    
       return res;
+   }
+ 
+   public int size( )
+   {
+      return mem. size( );
    }
 
    public void deallocate( int s )
@@ -108,14 +111,14 @@ public class Memory
       {
          -- i; 
          res. append(-i-1); res.append( ": " ); res. append( mem.get(i)); 
-         if( i != d ) res. append( ", " );
+         if( i != d ) res. append( ",   " );
       }
       return res. toString( );
    }
 
    public java.lang.String toString( )
    {
-      return toString( 10 );
+      return toString( 20 );
    }
 }
    

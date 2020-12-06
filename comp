@@ -5,6 +5,7 @@ Differences between Java and CPP:
 
 - The fact that you cannot catch exceptions that are not thrown is
   irritating. Similarly, forbidding unreachable code is irritating.
+  It makes it hard to make quick changes in code for trying out things. 
 
 - The java documentation on docs.oracle.com/javase/8/docs/api/java/util/HashMap.html
    is very convenient
@@ -15,5 +16,10 @@ Differences between Java and CPP:
 - The rule that classes in the top level cannot be accessed
   from packages is unacceptable.
 
-- same for the rule that closures cannot throw.
+- Same for the rule that closures cannot throw, I removed all of them. 
+
+- Absence of default constructors is irritating.
+
+- Java has no auto variables, no implicit type conversions.
+
  
