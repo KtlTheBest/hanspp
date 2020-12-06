@@ -71,17 +71,19 @@ public abstract class SanityChecks
         java.lang.String structname, type.Field[] fields ) 
       throws Error 
     {
-      if( visitedset. contains( structname ))
+      if( visitedstack.contains( structname ) )
       {
         throw new Error.checkwellformed( "structdef " + structname, 
             "definition is circular" );
       }
 
-      visitedset. add(structname);
-      visitedstack. add(structname);
       for(type.Field f : fields){
+        visitedstack. addFirst(structname);
         checknotcircular(structdefs, visitedset, visitedstack, f.tp);
+        visitedstack. removeFirst();
       }
+
+      visitedset. add(structname);
     }
 
 
