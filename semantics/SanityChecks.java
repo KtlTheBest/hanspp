@@ -41,24 +41,24 @@ public abstract class SanityChecks
 
   public static void 
     checkwellformed( type.StructStore structdefs, 
-        java.lang.String structname, type.Field[] struct ) 
+        java.lang.String structname, type.FieldArray struct ) 
       throws Error
     {
-      for( int i1 = 0; i1 < struct. length; ++ i1 )
+      for( int i1 = 0; i1 < struct. nrFields(); ++ i1 )
       {
         for( int i2 = 0; i2 < i1; ++ i2 )
         {
-          if(struct[i1].f.equals(struct[i2].f)){
-            throw new Error.checkwellformed("structdef " + structname, "has a multiple fields with name " + struct[i1].f);
+          if(struct.getName(i1).equals(struct.getName(i2))){
+            throw new Error.checkwellformed("structdef " + structname, "has a multiple fields with name " + struct.getName(i1));
           }
         }
       }
 
-      for( int i = 0; i < struct. length; ++ i )
+      for( int i = 0; i < struct. nrFields(); ++ i )
       {
-        checkwellformed(structdefs, structname + ":" + struct[i].f, struct[i].tp);
-        if(struct[i].tp instanceof type.Void){
-          throw new Error.checkwellformed("structdef " + structname, struct[i].f + " is of type Void");
+        checkwellformed(structdefs, structname + ":" + struct.getName(i), struct.getType(i));
+        if(struct.getType(i) instanceof type.Void){
+          throw new Error.checkwellformed("structdef " + structname, struct.getName(i) + " is of type Void");
         }
       }
     }   
@@ -68,7 +68,7 @@ public abstract class SanityChecks
     checknotcircular( type.StructStore structdefs,
         java.util.Set< java.lang.String > visitedset,
         java.util.Deque< java.lang.String > visitedstack, 
-        java.lang.String structname, type.Field[] fields ) 
+        java.lang.String structname, type.FieldArray fields ) 
       throws Error 
     {
       if( visitedstack.contains( structname ) )
@@ -77,9 +77,10 @@ public abstract class SanityChecks
             "definition is circular" );
       }
 
-      for(type.Field f : fields){
+      for(int i = 0; i < fields.nrFields(); ++i){
+        type.Type tp = fields.getType(i);
         visitedstack. addFirst(structname);
-        checknotcircular(structdefs, visitedset, visitedstack, f.tp);
+        checknotcircular(structdefs, visitedset, visitedstack, tp);
         visitedstack. removeFirst();
       }
 
@@ -108,18 +109,19 @@ public abstract class SanityChecks
   public static void
     checkFunctionHeader( type.StructStore structdefs, 
         java.lang.String funcname, 
-        type.Field[] parameters,
+        type.FieldArray parameters,
         type.Type returntype ) 
       throws Error 
     {
       checkwellformed(structdefs, funcname, returntype);
-      for(int i = 1; i < parameters.length; ++ i){
+      for(int i = 0; i < parameters.nrFields(); ++ i){
         for(int j = 0; j < i; ++ j){
-          if(parameters[i].f.equals(parameters[j])){
-            throw new Error.checkwellformed("function " + funcname, "There are multiple instances of " + parameters[i].f + " in parameter definition");
+          if(parameters.getName(i).equals(parameters.getName(j))){
+            throw new Error.checkwellformed("function " + funcname, "There are multiple instances of " + parameters.getName(i) + " in parameter definition");
           }
         }
-        checkwellformed(structdefs, "function " + funcname, parameters[i].tp);
+        type.Type tp = parameters.getType(i);
+        checkwellformed(structdefs, "function " + funcname, tp);
       }
     }
 

@@ -120,6 +120,12 @@ public class VarStack
          return occurrences. get( occurrences. size( ) - 1 ); 
    }
 
+   public boolean contains( java.lang.String id ){
+    int index = getIndex( id );
+    if( index == varstack. size() ) return false;
+    else return true;
+   }
+
    // Current offset of the variable with the given index.
    // Note that the oldest variable has index 0, and the most recent 
    // has index size( ) - 1. If you use a value returned by index( ),
