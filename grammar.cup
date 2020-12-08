@@ -63,14 +63,24 @@ Prog ::=   Prog CONSTANT IDENTIFIER:i ASSIGN BOOLCONST:b SEMICOLON
          | Prog STRUCTDEF IDENTIFIER:i ASSIGN
                  LPAR Decllist : lst RPAR SEMICOLON
             {: 
-              type.FieldArray.Field[] arr = lst. toArray( new type.FieldArray.Field[0] );
+              int len = lst. size();
+              type.FieldArray.Field[] arr = new type.FieldArray.Field[ len ];
+              for(int kek = 0; kek < len; ++ kek){
+                type.Field f = lst.get(kek);
+                arr[kek] = new type.FieldArray.Field(f.f, f.tp);
+              }
               type.FieldArray farr = new type.FieldArray( arr );
               parsetree. addstruct( i. id, farr ); 
               :}
          | Prog FUNCTION IDENTIFIER:i LPAR Decllist : params RPAR COLON
            Type: rettype Stat: body
            {:
-              type.FieldArray.Field[] arr = params. toArray( new type.FieldArray.Field[0] );
+              int len = params. size();
+              type.FieldArray.Field[] arr = new type.FieldArray.Field[ len ];
+              for(int kek = 0; kek < len; ++ kek){
+                type.Field f = params.get(kek);
+                arr[kek] = new type.FieldArray.Field(f.f, f.tp);
+              }
               type.FieldArray farr = new type.FieldArray( arr );
              parsetree. addfunction( i. id, farr, rettype, body ); :}
          |
