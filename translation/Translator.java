@@ -414,6 +414,7 @@ public class Translator
     if( expr instanceof ast.Apply && 
         ((ast.Apply) expr ).sub. length == 2 ) 
     {
+      System.out.println("Hello from Zhuldyz: \n" + expr);
       ast.Apply appl = (ast.Apply) expr;  
       java.lang.String binop = appl. function; 
       java.lang.String reg1 = regtranslateExpr( appl.sub[0] );
@@ -434,6 +435,7 @@ public class Translator
         java.lang.String result = registers. create( );
         emit( new Instruction.Binary( binop, result, new type.Bool( ), 
               reg1, reg2 ));
+        System.out.println("RETURNING!");
         return result;
       }
 
