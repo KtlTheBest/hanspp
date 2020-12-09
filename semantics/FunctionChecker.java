@@ -373,6 +373,24 @@ public class FunctionChecker
       throw new Error.checkExpr( "function " + funcname, 
           expr, " unknown tree type" );  
     }
+    
+    
+  private ast.Tree extractTypeFromPointer(ast.Tree sub){
+    type.Type tp = sub.type;
+
+    if(tp instanceof type.Pointer){
+      type.Pointer pntr = (type.Pointer) tp;
+      type.Type trueType = pntr.tp;
+
+      ast.Apply res = new ast.Apply("[load]", sub);
+      res.type = trueType;
+      if(trueType instanceof type.Pointer) res.lr = 'R';
+      else res.lr = sub.lr;
+      return res; 
+    } else {  
+      return sub;
+    }
+  }
 
   ast.Tree checkUnary( ast.Tree appl, java.lang.String unary,
       ast.Tree sub ) 
@@ -394,6 +412,51 @@ public class FunctionChecker
           throw new Error.checkExpr( "function " + funcname,
               appl, "subtree is not L-value" );
 
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        if(!(sub. type instanceof type.Double ||
+              sub. type instanceof type.Integer ||
+              sub. type instanceof type.Char ||
+              sub. type instanceof type.Pointer)){
+          throw new Error.checkExpr( "function " + funcname,
+              appl, "Can't perform " + unary + " on type " + sub. type. toString());
+              }
+
+        ast. Tree res = makeRValue(sub);
+        return res;
+      }
+
+      if(unary.equals("pntr")){
+        type.Type tp = sub. type;
+        sub = makeRValue(sub);
+
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        ast. Tree res = extractTypeFromPointer(sub);
+
+        res.lr = 'L';
+        return res;
+      }
+
+      if(unary.equals("amp")){
+
+        type.Type tp = sub. type;
+
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        ast. Tree res = makeRValue(sub);        
+        res = convert(sub, new type.Pointer(sub.type));
+
+        return res;
       }
 
       throw new Error.checkExpr( "function " + funcname,
@@ -405,6 +468,9 @@ public class FunctionChecker
   ast.Tree checkBinary( ast.Tree appl, java.lang.String binary,
       ast.Tree sub1, ast.Tree sub2 ) throws Error
   {
+
+    System.out.println("Hello from Kurmankul: ");
+    System.out.println(appl);
 
     if( outputlevel >= 2 )
     {
@@ -448,22 +514,75 @@ public class FunctionChecker
     {
       sub1 = makeRValue( sub1 );
       sub2 = makeRValue( sub2 ); 
-      // and some more ...          
+
+      int cost12 = penalty( sub1.type, sub2.type );
+      int cost21 = penalty( sub2.type, sub1.type );
+
+      if(cost12 < cost21 && cost12 < impossible){
+        sub1 = convert( sub1, sub2.type );
+      } else
+        if(cost21 < cost12 && cost21 < impossible){
+          sub2 = convert( sub2, sub1.type );
+        }
+
+      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
+      res. type = new type.Bool();
+      res. lr = 'R';
+
+      return res;
+    
     }
 
-    if( binary. equals( "mul" ) ||
+    if( binary. equals( "add" ) ||
+        binary. equals( "sub" ) ||
+        binary. equals( "mul" ) ||
         binary. equals( "div" ) ||
-        binary. equals( "mod" ))
+        binary. equals( "mod" ) )
     {
+      System.out.println("Starting making RVal");
       sub1 = makeRValue( sub1 );
       sub2 = makeRValue( sub2 );
+      System.out.println("Finished making RVal");
 
+      System.out.println("Starting penalty");
+      int cost12 = penalty( sub1.type, sub2.type );
+      int cost21 = penalty( sub2.type, sub1.type );
+      System.out.println("Finished penalty");
+
+      type.Type trueType = sub1.type;
+
+      System.out.println("Starting conversion checks");
+      System.out.println("cost12: " + cost12);
+      System.out.println("cost21: " + cost21);
+      if(cost12 < cost21 && cost12 < impossible){
+        sub1 = convert( sub1, sub2.type );
+        trueType = sub2.type;
+      } else
+        if(cost21 < cost12 && cost21 < impossible){
+          sub2 = convert( sub2, sub1.type );
+          trueType = sub1.type;
+        } else 
+          if(cost12 == impossible && cost21 == impossible){
+            if(sub1.type instanceof type.Pointer && sub2.type instanceof type.Integer){
+              trueType = new type.Pointer(new type.Integer());
+            } else
+              throw new Error.checkExpr("function " + funcname, appl,
+                  "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
+          }
+      System.out.println("Finished conversion checks");
+
+      System.out.println("Starting constructing tree node");
+      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
+      res. type = trueType;
+      res. lr = 'R';
+      System.out.println("Finished constructing tree node");
+
+      return res;
     } 
 
     throw new Error.checkExpr( "function " + funcname,
         appl, "unknown binary operator " + binary );
   }
-
 
   ast.Tree checkTernary( ast.Tree appl, java.lang.String ternary,
       ast.Tree sub1, ast.Tree sub2, ast.Tree sub3 )
@@ -481,6 +600,23 @@ public class FunctionChecker
         // Fortunately, C does not, so we convert our arguments into
         // Rvalues. 
 
+        sub1 = makeRValue(sub1);
+        sub2 = makeRValue(sub2);
+        sub3 = makeRValue(sub3);
+
+        int toBool = penalty(sub1. type, new type.Bool());
+
+        if(toBool == impossible){
+          throw new Error.checkExpr("function " + funcname, appl, "Cannot convert expression to bool");
+        }
+
+        sub1 = convert(sub1, new type.Bool());
+
+        ast.Apply res = new ast.Apply("??", sub1, sub2, sub3);
+        res.type = new type.Bool();
+        res.lr = 'R';
+
+        return res;
       } 
       throw new Error.checkExpr( "function " + funcname,
           appl, "unknown ternary operator " + ternary );
