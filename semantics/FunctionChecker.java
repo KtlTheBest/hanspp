@@ -459,6 +459,19 @@ public class FunctionChecker
 
         return res;
       }
+    
+      if(unary.equals("neg")){
+
+        type.Type tp = sub. type;
+
+        SanityChecks.checkwellformed(
+            prog. structdefs, 
+            funcname, 
+            sub. type);
+
+        ast. Tree res = makeRValue(sub);
+        return res;
+      }
 
       throw new Error.checkExpr( "function " + funcname,
           appl, "unknown unary operator " + unary );

@@ -6,59 +6,61 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int PLUSPLUS = 54;
-  public static final int STRUCTDEF = 24;
-  public static final int FUNCTION = 23;
+  public static final int PLUSPLUS = 56;
+  public static final int STRUCTDEF = 26;
+  public static final int FUNCTION = 25;
   public static final int CHAR = 11;
-  public static final int GE = 47;
+  public static final int GE = 49;
   public static final int POINTERCONST = 7;
   public static final int DOUBLE = 13;
   public static final int INTEGER = 12;
   public static final int ARRAY = 15;
-  public static final int NOT = 41;
-  public static final int AND = 40;
-  public static final int SEMICOLON = 36;
-  public static final int LT = 44;
-  public static final int RPAR = 29;
-  public static final int OR = 39;
+  public static final int NOT = 43;
+  public static final int AND = 42;
+  public static final int SEMICOLON = 38;
+  public static final int LT = 46;
+  public static final int RPAR = 31;
+  public static final int OR = 41;
   public static final int BOOL = 10;
-  public static final int COMMA = 32;
+  public static final int COMMA = 34;
   public static final int INTEGERCONST = 4;
   public static final int DOUBLECONST = 5;
-  public static final int BEGIN = 26;
-  public static final int LSQPAR = 30;
-  public static final int ASSIGN = 37;
+  public static final int BEGIN = 28;
+  public static final int LSQPAR = 32;
+  public static final int ASSIGN = 39;
   public static final int IF = 16;
-  public static final int AMPERSAND = 53;
-  public static final int DOT = 33;
-  public static final int LE = 46;
+  public static final int AMPERSAND = 55;
+  public static final int DOT = 35;
+  public static final int LE = 48;
   public static final int EOF = 0;
-  public static final int MINUSMINUS = 55;
+  public static final int MINUSMINUS = 57;
   public static final int RETURN = 22;
-  public static final int RSQPAR = 31;
+  public static final int RSQPAR = 33;
   public static final int error = 1;
-  public static final int MUL = 50;
-  public static final int MODULO = 52;
-  public static final int ADD = 48;
-  public static final int CONSTANT = 25;
+  public static final int MUL = 52;
+  public static final int TRACE = 24;
+  public static final int MODULO = 54;
+  public static final int ADD = 50;
+  public static final int NEWLINE = 23;
+  public static final int CONSTANT = 27;
   public static final int VOID = 9;
-  public static final int EQ = 42;
-  public static final int ARROW = 34;
-  public static final int COLON = 35;
+  public static final int EQ = 44;
+  public static final int ARROW = 36;
+  public static final int COLON = 37;
   public static final int ELSE = 18;
   public static final int CHARCONST = 3;
   public static final int WHILE = 19;
   public static final int THEN = 17;
-  public static final int NE = 43;
+  public static final int NE = 45;
   public static final int BOOLCONST = 2;
-  public static final int END = 27;
-  public static final int QUESTION = 38;
-  public static final int LPAR = 28;
+  public static final int END = 29;
+  public static final int QUESTION = 40;
+  public static final int LPAR = 30;
   public static final int STRING = 6;
   public static final int POINTER = 14;
-  public static final int GT = 45;
-  public static final int SUB = 49;
-  public static final int TRUEDIV = 51;
+  public static final int GT = 47;
+  public static final int SUB = 51;
+  public static final int TRUEDIV = 53;
   public static final int PRINT = 21;
   public static final int DO = 20;
   public static final int IDENTIFIER = 8;
@@ -86,6 +88,8 @@ public class sym {
   "DO",
   "PRINT",
   "RETURN",
+  "NEWLINE",
+  "TRACE",
   "FUNCTION",
   "STRUCTDEF",
   "CONSTANT",
