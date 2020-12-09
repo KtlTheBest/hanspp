@@ -484,6 +484,23 @@ public class Translator
 
     }      
 
+    if( expr instanceof ast.Select )
+    {
+      ast.Select sel = (ast.Select) expr;
+      ast.Identifier sub = (ast.Identifier) expr.sub[0];
+      java.lang.String reg1 = regtranslateExpr( sub );
+
+      int index = prog. strucdefs. get( sub.id ). getIndex( sel. field );
+      java.lang.String offsetreg = registers. create( );
+      int offset = prog. structdefs. getOffset( prog. structdefs, index );
+      type.Type fieldtype = new type.Pointer( prog. strucdefs. fieldtype( sub.id, index ) );
+
+      java.lang.String fieldreg = registers. create( );
+
+      emit( new Instruction.Constant( offsetreg, new Integer( offset ), fieldtype ) );
+      emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
+    }
+
     throw new NotFinished( "function " + funcname + "\n" + expr +
         "cannot regtranslate: unimplemented expression type" );
   }
@@ -552,6 +569,10 @@ public class Translator
         emit( new Instruction.Memcopy( from, into ));
         return;
       }
+
+      if( unop. equals( "select" ) ){
+        System.out.println("Hello from Kurmankul and Zhuldyz");
+      }
     }
 
     if( expr instanceof ast.Apply &&
@@ -578,6 +599,7 @@ public class Translator
 
     if( expr instanceof ast.Select )
     {
+      System.out.println("Hello from Kurmankul and Zhuldyz");
       int index = ((ast.Select) expr ). index;
       ast.Tree sub = ((ast.Select) expr ). sub;
 
