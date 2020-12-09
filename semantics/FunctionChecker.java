@@ -539,7 +539,7 @@ public class FunctionChecker
           sub2 = convert( sub2, sub1.type );
         }
 
-      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
+      ast.Tree res = new ast.Apply(binary, sub1, sub2);
       res. type = new type.Bool();
       res. lr = 'R';
 
@@ -586,7 +586,7 @@ public class FunctionChecker
       System.out.println("Finished conversion checks");
 
       System.out.println("Starting constructing tree node");
-      ast.Tree res = new ast.Apply("[" + binary + "]", sub1, sub2);
+      ast.Tree res = new ast.Apply(binary, sub1, sub2);
       res. type = trueType;
       res. lr = 'R';
       System.out.println("Finished constructing tree node");

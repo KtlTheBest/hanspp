@@ -432,6 +432,7 @@ public class Translator
           binop. equals( "lt" ) || binop. equals( "gt" ) || 
           binop. equals( "le" ) || binop. equals( "ge" )) 
       {
+        System.out.println("Entered the if from Zhuldyz");
         java.lang.String result = registers. create( );
         emit( new Instruction.Binary( binop, result, new type.Bool( ), 
               reg1, reg2 ));
