@@ -34,11 +34,26 @@ public class StructStore
     return defs.get( name ) != null; 
   }
 
+  public void printfields( java.lang.String name ){
+    System.out.println("Fields of struct " + name);
+    if( get( name ) == null ){
+      System.out.println("null");
+      return;
+    }
+
+    type.FieldArray farr = get( name );
+    for(int i = 0; i < farr.nrFields(); ++ i){
+      type.Type tp = farr.getType(i);
+      java.lang.String id = farr.getName(i);
+      System.out.println(id + " - " + tp);
+    }
+  }
+
   public boolean hasfield( java.lang.String name, java.lang.String field )
   {
     if( contains( name ) ){
       type.FieldArray farr = get(name);
-      if(farr.getIndex( name ) == farr.nrFields() ) 
+      if(farr.getIndex( field ) == farr.nrFields() ) 
         return false;
       else
         return true;

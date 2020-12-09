@@ -355,6 +355,7 @@ public class FunctionChecker
 
         if( ! prog. structdefs. hasfield( structname, field ))
         {
+          prog. structdefs. printfields( structname );
           throw new Error.checkExpr( " function " + funcname,
               expr, 
               "struct " + structname + 
