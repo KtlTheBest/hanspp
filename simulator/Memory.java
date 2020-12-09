@@ -34,7 +34,7 @@ public class Memory
 
       public java.lang.String toString( ) 
       {
-         return "#(" + addr + ")"; 
+         return "#" + addr; 
       }
 
       public Pointer plus( int s )
@@ -42,7 +42,9 @@ public class Memory
          return new Pointer( addr + s );
       }
 
-      int getInteger( )  
+      // Convert the pointer to an integer:
+  
+      int convInteger( )  
       {
          return addr;
       }
@@ -53,7 +55,7 @@ public class Memory
       mem. clear( );
    }
 
-   // s should be true size, not number of variables.
+   // s should be true size, not number of variables skipped: 
 
    public Pointer allocate( int s )
    {
@@ -81,15 +83,25 @@ public class Memory
 
    public void store( Pointer p, Object val )
    {
-      mem. set( -p. addr - 1, val );    // Because pointers are negative.
+      int addr = -p.addr - 1;  // Pointers are always negative.
+
+      if( addr < 0 || addr >= mem.size( ))
+         throw new java.lang.Error( "simulator: segmentation fault!" );
+ 
+      mem. set( addr, val ); 
    }
  
    public Object load( Pointer p )
    {
-      return mem.get( -p. addr - 1 );   // Because pointers are negative.
+      int addr = -p.addr - 1;   // Pointers are always negative.
+
+      if( addr < 0 || addr >= mem. size( ))
+         throw new java.lang.Error( "simulator: segmentation fault!" );
+
+      return mem.get( addr ); 
    }
 
-   public Pointer getvariable( int s )
+   public Pointer getVariable( int s )
    {
       return new Pointer( -mem.size( ) + s );
    }
@@ -111,7 +123,7 @@ public class Memory
       {
          -- i; 
          res. append(-i-1); res.append( ": " ); res. append( mem.get(i)); 
-         if( i != d ) res. append( ",   " );
+         if( i != d ) res. append( ",    " );
       }
       return res. toString( );
    }
@@ -122,4 +134,4 @@ public class Memory
    }
 }
    
-   
+

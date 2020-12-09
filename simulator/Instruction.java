@@ -183,21 +183,12 @@ public abstract class Instruction
          if( fromval != null && intoval != null &&
              intoval.type instanceof type.Pointer ) 
          {
-             type.Type tp = ((type.Pointer) intoval.type ). tp;  
-             if( fromval.type. equals( tp ))
-             {
-                mem. store( intoval. getPointer( ), fromval. val ); 
-                return;
-             }
-
-             // We need to change the type Pointer(Void). 
-
-             if( fromval.type. equals( new type.Pointer( new type.Void( ))))
-             {
-                fromval = new ValType( fromval.val, tp );
-                mem. store( intoval. getPointer( ), fromval. val );
-                return; 
-             }
+            type.Type tp = ((type.Pointer) intoval.type ). tp;  
+            if( fromval.type. equals( tp ))
+            {
+               mem. store( intoval. getPointer( ), fromval. val ); 
+               return;
+            }
          }
 
          throw wrongTypes( statestack. peek( ), fromval, intoval ); 
@@ -548,7 +539,7 @@ public abstract class Instruction
          for( type.Type t : skipped ) 
             s += t. memSize( structdefs );
 
-         Memory. Pointer res = mem. getvariable(s);
+         Memory. Pointer res = mem. getVariable(s);
          if( ! ( restype instanceof type.Pointer ))
             throw genericMisery( state, 
                                  "type " + restype + " is not pointer" );
@@ -628,7 +619,7 @@ public abstract class Instruction
          if( !loaded. seemswellformed( ))
          {
             throw genericMisery( state, "loaded value " + loaded + 
-                                 "seems not well formed" );
+                                 " seems not well formed" );
          }
 
          return loaded;
@@ -735,7 +726,28 @@ public abstract class Instruction
             if( cls == INTEGER )
                return new ValType( (double) val.getint( ));
          } 
-        
+       
+         if( restype instanceof type.Pointer && cls == POINTER )
+         {
+            type.Type from = ((type.Pointer) val.type ).tp; 
+            type.Type into = ((type.Pointer) restype ).tp; 
+
+            if( from instanceof type.Array )
+            {
+               // We accept Array(n,T) -> Pointer(T):
+
+               from = ((type.Array) from ). tp; 
+               if( from. equals( into ))
+                  return new ValType( val. getPointer( ), restype ); 
+            }
+
+            if( from instanceof type.Void )
+            {
+               // We accept Void -> T 
+
+               return new ValType( val. getPointer( ), restype ); 
+            }
+         }
          throw wrongTypes( state, val );
       }
 
@@ -854,8 +866,8 @@ public abstract class Instruction
             Memory.Pointer p1 = val1. getPointer( );
             Memory.Pointer p2 = val2. getPointer( );
 
-            int i1 = p1. getInteger( );
-            int i2 = p2. getInteger( );
+            int i1 = p1. convInteger( );
+            int i2 = p2. convInteger( );
 
             if( op == "eq" ) return new ValType( i1 == i2 );
             if( op == "ne" ) return new ValType( i1 != i2 );
@@ -922,16 +934,21 @@ public abstract class Instruction
                if( tp instanceof type.Array &&
                    restype instanceof type.Pointer && op == "add" )
                {
+                  System.out.println( "type 3 addition" );
+
                   if( i2 < 0 )
                      throw genericMisery( state,
                                      "negative offset in array entry" );
                   
                   int arraysize = ((type.Array) tp ). s;
                   type.Type arraytype = ((type.Array) tp ). tp;  
-                
-                  if( i2 >= arraysize )
+               
+                  // We have to accept i2 == arraysize, because it
+                  // can be used as border.
+ 
+                  if( i2 > arraysize )
                      throw genericMisery( state,
-                             "offset " + i2 + " >= arraysize" );  
+                             "offset " + i2 + " > arraysize" );  
 
                   return new ValType( val1. getPointer( ). plus( 
                                 i2 * arraytype.memSize( structdefs )), 

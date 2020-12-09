@@ -29,6 +29,11 @@ public class Program
       return create( name, new FunctionBody( ));
    }
 
+   public FunctionBody get( java.lang.String name ) 
+   {
+      return funcdefs. get( name );
+   }
+
    // Start the simulation: Call func, which should return rettype, 
    // with parameters parvalues whose types are .
    // Note that in our system, parameters can have size > 1.
