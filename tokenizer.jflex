@@ -39,6 +39,8 @@ Identifier = [:jletter:]([:jletter:] | [0-9])*
 
 // reserved words
 
+TraceClause = trace
+NewlineClause = newline
 IfClause = if
 ThenClause = then
 ElseClause = else
@@ -129,6 +131,8 @@ CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
   
   return symbol( sym. CHARCONST, new ast.Char(c) );}
 
+{TraceClause} { return symbol( sym. TRACE ); }
+{NewlineClause} { return symbol( sym. NEWLINE ); }
 {IfClause} { return symbol( sym.IF ); }
 {ThenClause} { return symbol( sym.THEN ); }
 {ElseClause} { return symbol( sym.ELSE ); }

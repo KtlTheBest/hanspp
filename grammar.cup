@@ -27,7 +27,7 @@ terminal     ast.Pointer      POINTERCONST;
 terminal     ast.Identifier   IDENTIFIER;
 
 terminal          VOID, BOOL, CHAR, INTEGER, DOUBLE, POINTER, ARRAY;
-terminal          IF, THEN, ELSE, WHILE, DO, PRINT, RETURN;
+terminal          IF, THEN, ELSE, WHILE, DO, PRINT, RETURN, NEWLINE, TRACE;
 terminal          FUNCTION, STRUCTDEF, CONSTANT;
 terminal          BEGIN, END;
 terminal          LPAR, RPAR, LSQPAR, RSQPAR, COMMA, DOT, ARROW;
@@ -170,7 +170,11 @@ Stat  ::=  IF Expr : cond THEN Stat : body
                 :}
          |
            RETURN {: RESULT = new ast.Apply("[return]"); :}
-           ;
+         |
+           TRACE {: RESULT = new ast.Apply("[trace]"); :}
+         |
+           NEWLINE {: RESULT = new ast.Apply("[newline]"); :}
+         ;
 
 Statlist ::= Stat : s {: java.util.ArrayList <ast.Tree> lst = 
                                 new java.util.ArrayList<ast.Tree>(); 
