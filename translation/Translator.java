@@ -276,6 +276,14 @@ public class Translator
       return result; 
     }
 
+    if( expr instanceof ast.Integer )
+    {
+      java.lang.String result = registers. create( );
+      emit( new Instruction.Constant( result, ((ast.Integer) expr).i,
+            expr. type ));
+      return result; 
+    }
+
 
     if( expr instanceof ast.Identifier )
     {
