@@ -75,7 +75,7 @@ public class StructStore
     return farr.getType(pos);
   }
 
-  public FieldArray get( java.lang.String name )
+  public type.FieldArray get( java.lang.String name )
   {
     return defs.get( name );
   }

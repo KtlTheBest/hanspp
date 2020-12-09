@@ -487,18 +487,22 @@ public class Translator
     if( expr instanceof ast.Select )
     {
       ast.Select sel = (ast.Select) expr;
-      ast.Identifier sub = (ast.Identifier) expr.sub[0];
+      ast.Identifier sub = (ast.Identifier) sel.sub;
       java.lang.String reg1 = regtranslateExpr( sub );
 
-      int index = prog. strucdefs. get( sub.id ). getIndex( sel. field );
+      int index = prog. structdefs. get( sub.id ). getIndex( sel. field );
       java.lang.String offsetreg = registers. create( );
-      int offset = prog. structdefs. getOffset( prog. structdefs, index );
-      type.Type fieldtype = new type.Pointer( prog. strucdefs. fieldtype( sub.id, index ) );
+
+      int offset = prog. structdefs. get( sub.id ). offset( prog. structdefs, index );
+      type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( sub.id, index ) );
 
       java.lang.String fieldreg = registers. create( );
+      java.lang.String structreg = registers. create( );
 
       emit( new Instruction.Constant( offsetreg, new Integer( offset ), fieldtype ) );
       emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
+
+      return fieldreg;
     }
 
     throw new NotFinished( "function " + funcname + "\n" + expr +
