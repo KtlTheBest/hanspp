@@ -1,0 +1,22 @@
+structdef complex = (re : double, im : double);
+
+function complex( re : double, im : double ) : complex
+begin
+   res : complex;
+   res. re = re;
+   res. im = im;
+   return res
+end
+
+function complexsum( c1 : complex, c2 : complex ) : complex
+   return complex( c1. re + c2. re, c1. im + c2. im ) 
+
+function main( ) : void
+begin
+  c1 : complex;
+  c2 : complex;
+  c1 = complex(1, 100);
+  c2 = complex(10, 5);
+  complexsum(c1, c2);
+  return
+end

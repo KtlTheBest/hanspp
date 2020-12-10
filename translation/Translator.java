@@ -528,6 +528,7 @@ public class Translator
 
       int localvarindex = localvars. getIndex( fieldid );
       System.out.println("The index of " + fieldid + " is " + localvarindex);
+      emit( new Instruction.Comment( "The index on stack of " + fieldid + " is " + localvarindex ) );
       java.util.ArrayList <type.Type> skipped = new java.util.ArrayList<type.Type>();
 
       int i = localvars. nrVariables( );
