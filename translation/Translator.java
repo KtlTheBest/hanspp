@@ -500,9 +500,8 @@ public class Translator
     {
       ast.Select sel = (ast.Select) expr;
       ast.Tree sub = sel.sub;
-      java.lang.String reg1 = regtranslateExpr( sub );
 
-      java.lang.String fieldid = extractid( sub );
+      java.lang.String structreg = regtranslateExpr( sub );
       System.out.println("Trying to get closer to the truth");
 
       System.out.println(sel. field);
@@ -517,31 +516,13 @@ public class Translator
       System.out.println("Trying to get closer to the truth..");
 
       emit( new Instruction.Comment( "Trying to get offset of " + sel.field + " in struct " + structname ) );
-      //int offset = prog. structdefs. get( structname ). offset( prog. structdefs, index );
-      int offset = index;
-      emit( new Instruction.Comment( "The offset is " + offset ) );
+      emit( new Instruction.Comment( "The offset is " + index ) );
             
       type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( structname, index ) );
 
       java.lang.String fieldreg = registers. create( );
-      java.lang.String structreg = registers. create( );
 
-      int localvarindex = localvars. getIndex( fieldid );
-      System.out.println("The index of " + fieldid + " is " + localvarindex);
-      emit( new Instruction.Comment( "The index on stack of " + fieldid + " is " + localvarindex ) );
-      java.util.ArrayList <type.Type> skipped = new java.util.ArrayList<type.Type>();
-
-      int i = localvars. nrVariables( );
-      while( i > localvarindex + 1 )
-      {
-        -- i;
-        skipped. add( localvars. getType(i) );
-      }
-
-      System.out.println("Got skipped types");
-
-      emit( new Instruction.Variable( structreg, new type.Pointer( sub.type ), skipped.toArray( new type.Type[0] ) ) );
-      emit( new Instruction.Constant( offsetreg, new Integer( offset ), new type.Integer() ) );
+      emit( new Instruction.Constant( offsetreg, new Integer( index ), new type.Integer() ) );
       emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
 
       return fieldreg;
@@ -664,7 +645,6 @@ public class Translator
 
     if( expr instanceof ast.Select )
     {
-      System.out.println("Hello from Kurmankul and Zhuldyz");
       int index = ((ast.Select) expr ). index;
       ast.Tree sub = ((ast.Select) expr ). sub;
 

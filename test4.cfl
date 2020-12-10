@@ -52,8 +52,8 @@ begin
    pair. first. im = 100;
    pair. second. re = 10;
    pair. second. im = 5;
-   printcomplex( complexsum( negate( justreturn( pair ).first ), 
-                             justreturn( pair ).second ));
+   printcomplex( complexsum( negate( justreturn( pair.first ) ), 
+                             justreturn( pair.second ) ));
 
    d : double;
    d = 30; 

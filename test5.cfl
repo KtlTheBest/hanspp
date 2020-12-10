@@ -1,11 +1,12 @@
 structdef complex = (re : double, im : double);
+structdef complexpair = ( first : complex, second : complex );
 
-function complex( re : double, im : double ) : complex
+function complex( re : double, im : double ) : complex 
 begin
-   res : complex;
-   res. re = re;
-   res. im = im;
-   return res
+  c : complex;
+  c. re = re;
+  c. im = im;
+  return c
 end
 
 function complexsum( c1 : complex, c2 : complex ) : complex
@@ -13,10 +14,11 @@ function complexsum( c1 : complex, c2 : complex ) : complex
 
 function main( ) : void
 begin
-  c1 : complex;
-  c2 : complex;
-  c1 = complex(1, 100);
-  c2 = complex(10, 5);
-  complexsum(c1, c2);
+  pair : complexpair;
+  pair. first. re = 1;
+  pair. first. im = 100;
+  pair. second. re = 10;
+  pair. second. im = 5;
+  complexsum(pair. first, pair. second);
   return
 end
