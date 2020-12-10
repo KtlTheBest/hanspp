@@ -537,7 +537,7 @@ public class Translator
       System.out.println("Got skipped types");
 
       emit( new Instruction.Variable( structreg, new type.Pointer( sub.type ), skipped.toArray( new type.Type[0] ) ) );
-      emit( new Instruction.Constant( offsetreg, new Integer( offset ), fieldtype ) );
+      emit( new Instruction.Constant( offsetreg, new Integer( offset ), new type.Integer() ) );
       emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
 
       return fieldreg;

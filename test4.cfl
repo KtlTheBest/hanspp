@@ -1,0 +1,63 @@
+structdef complex = ( re: double, im : double );
+structdef complexpair = ( first : complex, second : complex );
+
+constant pi = 3.141592653589793;
+
+function sinegrad( x : double ) : double
+begin
+  x = x * pi / 180;
+  n : integer; n = 1;
+  sum : double; sum = 0;
+  term : double; term = x; 
+  while sum + term != sum do
+  begin
+     sum = sum + term;
+     term = -term * x * x / ( n + 1 ) / ( n + 2 );
+     n = n + 2
+  end;
+  return sum
+end
+
+function printcomplex( c : complex ) : void
+begin
+   print "complex: "; print c.re; print ", "; print c.im; newline; 
+   return
+end
+
+function complex( re : double, im : double ) : complex
+begin
+   res : complex;
+   res. re = re;
+   res. im = im;
+   return res
+end
+
+function complexsum( c1 : complex, c2 : complex ) : complex
+   return complex( c1. re + c2. re, c1. im + c2. im ) 
+
+function negate( c : complex ) : complex
+begin
+   c. re = - c.re;
+   c. im = - c.im;
+   return c
+end
+
+function justreturn( pair : complexpair ) : complexpair
+   return pair
+
+function main( ) : void
+begin
+   pair : complexpair; 
+   pair. first. re = 1;
+   pair. first. im = 100;
+   pair. second. re = 10;
+   pair. second. im = 5;
+   printcomplex( complexsum( negate( justreturn( pair ).first ), 
+                             justreturn( pair ).second ));
+
+   d : double;
+   d = 30; 
+   print "sine of "; print d; print " degrees equals ";
+   print sinegrad( d ); newline ; 
+   return
+end
