@@ -7,7 +7,7 @@ class Main
     try 
     {
       Lexer lex = new Lexer( new java.io.InputStreamReader( System.in ));
-      lex = new Lexer( new java.io.FileReader( "test.cfl" )); 
+      lex = new Lexer( new java.io.FileReader( "test6.cfl" )); 
 
       Parser cupparser = new Parser( lex );
 

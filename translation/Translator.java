@@ -265,7 +265,10 @@ public class Translator
     if( expr instanceof ast.Pointer )
     {
       java.lang.String resreg = registers.create( );
-      emit( new Instruction.Constant( resreg, ((ast.Pointer) expr).p, ( (type.Pointer) expr.type). tp) );
+      emit( new Instruction.Comment( "The type of pointer is " + ( (type.Pointer) expr.type). tp + " and the tree looks like this:\n" + expr) );
+      type.Type trueType = ((type.Pointer) expr.type). tp;
+      if( trueType instanceof type.Void ) trueType = new type.Pointer( trueType );
+      emit( new Instruction.Constant( resreg, new simulator.Memory.Pointer(((ast.Pointer) expr).p), trueType ) );
       return resreg;
     }
 

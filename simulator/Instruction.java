@@ -618,6 +618,7 @@ public abstract class Instruction
  
          if( !loaded. seemswellformed( ))
          {
+            System.out.println( loaded );
             throw genericMisery( state, "loaded value " + loaded + 
                                  " seems not well formed" );
          }

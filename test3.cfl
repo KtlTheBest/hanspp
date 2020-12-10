@@ -1,0 +1,2 @@
+structdef complex = ( re: double, im : double );
+structdef complexpair = ( first : complex, second : complex );

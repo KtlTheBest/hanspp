@@ -440,7 +440,14 @@ public class FunctionChecker
             funcname, 
             sub. type);
 
-        ast. Tree res = extractTypeFromPointer(sub);
+        if( !( tp instanceof type.Pointer ) )
+        {
+          throw new Error.checkExpr( "function " + funcname,
+              appl, "Can't perform " + unary + " on type " + sub. type. toString());
+        }
+
+        ast. Tree res = new ast.Apply( "[conv]", sub );
+        res.type = ((type.Pointer) tp).tp;
 
         res.lr = 'L';
         return res;
@@ -555,8 +562,8 @@ public class FunctionChecker
         binary. equals( "mod" ) )
     {
       System.out.println("Starting making RVal");
-      sub1 = makeRValue( sub1 );
-      sub2 = makeRValue( sub2 );
+      if( ! (sub1.type instanceof type.Array) ) sub1 = makeRValue( sub1 );
+      if( ! (sub2.type instanceof type.Array) ) sub2 = makeRValue( sub2 );
       System.out.println("Finished making RVal");
 
       System.out.println("Starting penalty");
@@ -564,8 +571,15 @@ public class FunctionChecker
       int cost21 = penalty( sub2.type, sub1.type );
       System.out.println("Finished penalty");
 
-      type.Type trueType = sub1.type;
+      if(sub1.type instanceof type.Array){
+        sub1 = array2pointer( sub1 );
+      }
 
+      if(sub2.type instanceof type.Array){
+        sub2 = array2pointer( sub2 );
+      }
+
+      type.Type trueType = sub1.type;
       System.out.println("Starting conversion checks");
       System.out.println("cost12: " + cost12);
       System.out.println("cost21: " + cost21);
@@ -579,10 +593,14 @@ public class FunctionChecker
         } else 
           if(cost12 == impossible && cost21 == impossible){
             if(sub1.type instanceof type.Pointer && sub2.type instanceof type.Integer){
-              trueType = new type.Pointer(new type.Integer());
-            } else
+              trueType = new type.Pointer( ((type.Pointer) sub1.type). tp );
+            } else {
+              System.out.println("Hello from Hans:");
+              System.out.println("sub1:\n" + sub1);
+              System.out.println("sub2:\n" + sub2);
               throw new Error.checkExpr("function " + funcname, appl,
                   "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
+            }
           }
       System.out.println("Finished conversion checks");
 
@@ -754,8 +772,10 @@ public class FunctionChecker
 
   public static ast.Tree array2pointer( ast.Tree t )
   {
+    System.out.println("Echo from Dnislam\n" + t);
     if( t. lr == 'L' && t. type instanceof type.Array )
     {
+      System.out.println("Hello from Dnislam\n" + t);
       type.Type tp = ((type.Array) t. type ). tp; 
       ast.Apply res = new ast.Apply( "[conv]", t );
 

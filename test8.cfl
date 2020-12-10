@@ -1,0 +1,12 @@
+structdef strc = ( val : array( 10, array( 10, double ) ) );
+
+function main( ) : void
+begin
+  i : integer;
+  j : integer;
+  result : strc;
+  j = 0;
+  i = 0;
+  result.val[i][j];
+  return
+end
