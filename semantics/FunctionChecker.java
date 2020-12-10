@@ -383,7 +383,7 @@ public class FunctionChecker
       type.Pointer pntr = (type.Pointer) tp;
       type.Type trueType = pntr.tp;
 
-      ast.Apply res = new ast.Apply("[load]", sub);
+      ast.Apply res = new ast.Apply("[conv]", sub);
       res.type = trueType;
       if(trueType instanceof type.Pointer) res.lr = 'R';
       else res.lr = sub.lr;

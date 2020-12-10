@@ -265,7 +265,7 @@ public class Translator
     if( expr instanceof ast.Pointer )
     {
       java.lang.String resreg = registers.create( );
-      emit( new Instruction.Constant( resreg, (ast.Pointer) expr, ( (type.Pointer) expr.type). tp) );
+      emit( new Instruction.Constant( resreg, ((ast.Pointer) expr).p, ( (type.Pointer) expr.type). tp) );
       return resreg;
     }
 
@@ -499,13 +499,13 @@ public class Translator
     if( expr instanceof ast.Select )
     {
       ast.Select sel = (ast.Select) expr;
-      ast.Identifier sub = (ast.Identifier) sel.sub;
+      ast.Tree sub = sel.sub;
       java.lang.String reg1 = regtranslateExpr( sub );
 
+      java.lang.String fieldid = extractid( sub );
       System.out.println("Trying to get closer to the truth");
 
       System.out.println(sel. field);
-      System.out.println(sub. id);
 
       java.lang.String structname = ((type.Struct) sub.type).name;
 
@@ -518,13 +518,13 @@ public class Translator
 
       int offset = prog. structdefs. get( structname ). offset( prog. structdefs, index );
             
-      type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( sub.id, index ) );
+      type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( structname, index ) );
 
       java.lang.String fieldreg = registers. create( );
       java.lang.String structreg = registers. create( );
 
-      int localvarindex = localvars. getIndex( sub.id );
-      System.out.println("The index of " + sub.id + " is " + localvarindex);
+      int localvarindex = localvars. getIndex( fieldid );
+      System.out.println("The index of " + fieldid + " is " + localvarindex);
       java.util.ArrayList <type.Type> skipped = new java.util.ArrayList<type.Type>();
 
       int i = localvars. nrVariables( );
@@ -547,6 +547,25 @@ public class Translator
         "cannot regtranslate: unimplemented expression type" );
   }
 
+  java.lang.String extractid(ast.Tree expr){
+    if(expr instanceof ast.Identifier)
+    {
+      return ((ast.Identifier) expr). id;
+    }
+
+    if(expr instanceof ast.Apply)
+    {
+      ast.Apply appl = (ast.Apply) expr;
+      for(int i = 0; i < appl.sub.length; ++ i)
+      {
+        java.lang.String t = extractid(appl.sub[i]);
+        if(t.equals("not found")) continue;
+        return t;
+      }
+    }
+
+    return "not found";
+  }
 
   // Translate expr into memory: That means: 
   // Allocate space for the result on top of the stack, and write 
