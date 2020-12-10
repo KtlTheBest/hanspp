@@ -219,7 +219,7 @@ Expr7 ::= Expr7 : e1 ADD Expr8 : e2 {: RESULT = new ast.Apply("add", e1, e2); :}
     ;
 
 Expr8 ::= Expr8 : e1 MUL Expr9 : e2 {: RESULT = new ast.Apply("mul", e1, e2); :}
-    | Expr8 : e1 TRUEDIV Expr9 : e2 {: RESULT = new ast.Apply("div", e1, e2); :}
+    | Expr8 : e1 TRUEDIV Expr9 : e2 {: RESULT = new ast.Apply("truediv", e1, e2); :}
     | Expr8 : e1 MODULO Expr9 : e2 {: RESULT = new ast.Apply("mod", e1, e2); :}
     | Expr9 : e9 {: RESULT = e9; :}
     ;

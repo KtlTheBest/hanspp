@@ -550,7 +550,7 @@ public class FunctionChecker
     if( binary. equals( "add" ) ||
         binary. equals( "sub" ) ||
         binary. equals( "mul" ) ||
-        binary. equals( "div" ) ||
+        binary. equals( "truediv" ) ||
         binary. equals( "mod" ) )
     {
       System.out.println("Starting making RVal");
