@@ -260,6 +260,8 @@ public class Translator
 
     // Constant types:
 
+    System.out.println("Hello from Arailym in regtranslateExpr\n" + expr);
+
     if( expr instanceof ast.Bool )
     {
       java.lang.String result = registers. create( );
@@ -417,8 +419,11 @@ public class Translator
       System.out.println("Hello from Zhuldyz: \n" + expr);
       ast.Apply appl = (ast.Apply) expr;  
       java.lang.String binop = appl. function; 
+      System.out.println(binop);
       java.lang.String reg1 = regtranslateExpr( appl.sub[0] );
+      System.out.println(reg1);
       java.lang.String reg2 = regtranslateExpr( appl.sub[1] );
+      System.out.println(reg2);
       // Here is room for optimization, one could do the 
       // bigger first, or better said: The wider first. 
 
@@ -490,14 +495,42 @@ public class Translator
       ast.Identifier sub = (ast.Identifier) sel.sub;
       java.lang.String reg1 = regtranslateExpr( sub );
 
-      int index = prog. structdefs. get( sub.id ). getIndex( sel. field );
+      System.out.println("Trying to get closer to the truth");
+
+      System.out.println(sel. field);
+      System.out.println(sub. id);
+
+
+      java.lang.String structname = ((type.Struct) sub.type).name;
+
+
+      System.out.println("Trying to get closer to the truth.");
+      System.out.println(structname);
+      int index = prog. structdefs. get( structname ). getIndex( sel. field );
       java.lang.String offsetreg = registers. create( );
+
+      System.out.println("Trying to get closer to the truth..");
 
       int offset = prog. structdefs. get( sub.id ). offset( prog. structdefs, index );
       type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( sub.id, index ) );
 
       java.lang.String fieldreg = registers. create( );
       java.lang.String structreg = registers. create( );
+
+      int localvarindex = localvars. getIndex( sub.id );
+      System.out.println("The index of " + sub.id + " is " + localvarindex);
+      java.util.ArrayList <type.Type> skipped = new java.util.ArrayList<type.Type>();
+
+      int i = localvars. nrVariables( );
+      while( i > localvarindex + 1 )
+      {
+        -- i;
+        skipped. add( localvars. getType(i) );
+      }
+
+      System.out.println("Got skipped types");
+
+      emit( new Instruction.Variable( structreg, new type.Pointer( sub.type ), skipped.toArray( new type.Type[0] ) ) );
 
       emit( new Instruction.Constant( offsetreg, new Integer( offset ), fieldtype ) );
       emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
