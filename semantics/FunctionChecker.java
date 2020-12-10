@@ -368,6 +368,7 @@ public class FunctionChecker
         ast.Select result = new ast.Select( field, sub );
         result. type = tp;
         result. lr = sub. lr; 
+        result. index = position;
         return array2pointer( result );  
       }
 

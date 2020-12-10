@@ -511,12 +511,15 @@ public class Translator
 
       System.out.println("Trying to get closer to the truth.");
       System.out.println(structname);
-      int index = prog. structdefs. get( structname ). getIndex( sel. field );
+      int index = sel. index;
       java.lang.String offsetreg = registers. create( );
 
       System.out.println("Trying to get closer to the truth..");
 
-      int offset = prog. structdefs. get( structname ). offset( prog. structdefs, index );
+      emit( new Instruction.Comment( "Trying to get offset of " + sel.field + " in struct " + structname ) );
+      //int offset = prog. structdefs. get( structname ). offset( prog. structdefs, index );
+      int offset = index;
+      emit( new Instruction.Comment( "The offset is " + offset ) );
             
       type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( structname, index ) );
 
