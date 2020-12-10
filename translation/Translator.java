@@ -500,9 +500,7 @@ public class Translator
       System.out.println(sel. field);
       System.out.println(sub. id);
 
-
       java.lang.String structname = ((type.Struct) sub.type).name;
-
 
       System.out.println("Trying to get closer to the truth.");
       System.out.println(structname);
@@ -511,7 +509,8 @@ public class Translator
 
       System.out.println("Trying to get closer to the truth..");
 
-      int offset = prog. structdefs. get( sub.id ). offset( prog. structdefs, index );
+      int offset = prog. structdefs. get( structname ). offset( prog. structdefs, index );
+            
       type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( sub.id, index ) );
 
       java.lang.String fieldreg = registers. create( );
@@ -531,7 +530,6 @@ public class Translator
       System.out.println("Got skipped types");
 
       emit( new Instruction.Variable( structreg, new type.Pointer( sub.type ), skipped.toArray( new type.Type[0] ) ) );
-
       emit( new Instruction.Constant( offsetreg, new Integer( offset ), fieldtype ) );
       emit( new Instruction.Binary( "add", fieldreg, fieldtype, structreg, offsetreg ) );
 
