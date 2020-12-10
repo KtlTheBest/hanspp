@@ -262,6 +262,13 @@ public class Translator
 
     System.out.println("Hello from Arailym in regtranslateExpr\n" + expr);
 
+    if( expr instanceof ast.Pointer )
+    {
+      java.lang.String resreg = registers.create( );
+      emit( new Instruction.Constant( resreg, (ast.Pointer) expr, ( (type.Pointer) expr.type). tp) );
+      return resreg;
+    }
+
     if( expr instanceof ast.Bool )
     {
       java.lang.String result = registers. create( );
