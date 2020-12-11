@@ -247,8 +247,6 @@ Expr12 ::= Expr12 : e12 PLUSPLUS       {: RESULT = new ast.Apply("[xpp]", e12); 
     | Expr12 : e12 DOT IDENTIFIER : id {: RESULT = new ast.Select(id.id, e12); :}
     | Expr12 : e12 ARROW IDENTIFIER : id {: RESULT = new ast.Select(id.id, new ast.Apply("pntr", e12)); :}
     | Expr12 : e12 LSQPAR Expr : e RSQPAR {: 
-        System.out.println("Hello from Kurmankul in grammar: e12\n" + e12);
-        System.out.println("Hello from Kurmankul in grammar: e\n" + e);
         RESULT = new ast.Apply("pntr", new ast.Apply("add", e12, e)); 
         :}
     | IDENTIFIER : id {: RESULT = id; :}

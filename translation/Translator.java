@@ -260,8 +260,6 @@ public class Translator
 
     // Constant types:
 
-    System.out.println("Hello from Arailym in regtranslateExpr\n" + expr);
-
     if( expr instanceof ast.Pointer )
     {
       java.lang.String resreg = registers.create( );
@@ -342,7 +340,6 @@ public class Translator
     if( expr instanceof ast.Apply && 
         ((ast.Apply) expr ).sub. length == 1 )
     {
-      System.out.println("Hello from Zhalgas\n" + expr);
       ast.Apply appl = (ast.Apply) expr;  
       java.lang.String unop = appl. function;  
       java.lang.String reg1 = regtranslateExpr( appl.sub[0] );
@@ -415,7 +412,6 @@ public class Translator
           op = "sub";
         }
 
-        emit( new Instruction.Comment( "Trying to perform " + unop + " on " + regval + " and " + tempreg + " and store result in " + resReg ) );
         emit( new Instruction.Binary(
               op,
               resReg,
@@ -432,14 +428,10 @@ public class Translator
     if( expr instanceof ast.Apply && 
         ((ast.Apply) expr ).sub. length == 2 ) 
     {
-      System.out.println("Hello from Zhuldyz: \n" + expr);
       ast.Apply appl = (ast.Apply) expr;  
       java.lang.String binop = appl. function; 
-      System.out.println(binop);
       java.lang.String reg1 = regtranslateExpr( appl.sub[0] );
-      System.out.println(reg1);
       java.lang.String reg2 = regtranslateExpr( appl.sub[1] );
-      System.out.println(reg2);
       // Here is room for optimization, one could do the 
       // bigger first, or better said: The wider first. 
 
@@ -453,11 +445,9 @@ public class Translator
           binop. equals( "lt" ) || binop. equals( "gt" ) || 
           binop. equals( "le" ) || binop. equals( "ge" )) 
       {
-        System.out.println("Entered the if from Zhuldyz");
         java.lang.String result = registers. create( );
         emit( new Instruction.Binary( binop, result, new type.Bool( ), 
               reg1, reg2 ));
-        System.out.println("RETURNING!");
         return result;
       }
 
@@ -511,22 +501,12 @@ public class Translator
       ast.Tree sub = sel.sub;
 
       java.lang.String structreg = regtranslateExpr( sub );
-      System.out.println("Trying to get closer to the truth");
-
-      System.out.println(sel. field);
 
       java.lang.String structname = ((type.Struct) sub.type).name;
 
-      System.out.println("Trying to get closer to the truth.");
-      System.out.println(structname);
       int index = sel. index;
       java.lang.String offsetreg = registers. create( );
 
-      System.out.println("Trying to get closer to the truth..");
-
-      emit( new Instruction.Comment( "Trying to get offset of " + sel.field + " in struct " + structname ) );
-      emit( new Instruction.Comment( "The offset is " + index ) );
-            
       type.Type fieldtype = new type.Pointer( prog. structdefs. fieldtype( structname, index ) );
 
       java.lang.String fieldreg = registers. create( );
@@ -623,10 +603,6 @@ public class Translator
         emit( new Instruction.Variable( into, sub.trueType( ) ));
         emit( new Instruction.Memcopy( from, into ));
         return;
-      }
-
-      if( unop. equals( "select" ) ){
-        System.out.println("Hello from Kurmankul and Zhuldyz");
       }
     }
 

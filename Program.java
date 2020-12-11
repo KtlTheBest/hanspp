@@ -57,10 +57,6 @@ public class Program
     if( funcdefs. get( id ) != null )
       throw new SemanticError( "function " + id + " redefined" );
     else {
-      System.out.println("KEEEK!!! " + id);
-      if(id.equals("fact")){
-        System.out.println("INTEEERNAAAAL: " + returntype.toString());
-      }
       funcdefs. put( id, new FuncDef( 
             parameters. toArray( new type.Field[] {} ), 
             returntype, body ));

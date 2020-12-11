@@ -499,9 +499,6 @@ public class FunctionChecker
       ast.Tree sub1, ast.Tree sub2 ) throws Error
   {
 
-    System.out.println("Hello from Kurmankul: ");
-    System.out.println(appl);
-
     if( outputlevel >= 2 )
     {
       System. out. println( "binary " + appl ); 
@@ -569,15 +566,11 @@ public class FunctionChecker
         binary. equals( "truediv" ) ||
         binary. equals( "mod" ) )
     {
-      System.out.println("Starting making RVal");
       if( ! (sub1.type instanceof type.Array) ) sub1 = makeRValue( sub1 );
       if( ! (sub2.type instanceof type.Array) ) sub2 = makeRValue( sub2 );
-      System.out.println("Finished making RVal");
 
-      System.out.println("Starting penalty");
       int cost12 = penalty( sub1.type, sub2.type );
       int cost21 = penalty( sub2.type, sub1.type );
-      System.out.println("Finished penalty");
 
       if(sub1.type instanceof type.Array){
         sub1 = array2pointer( sub1 );
@@ -588,9 +581,6 @@ public class FunctionChecker
       }
 
       type.Type trueType = sub1.type;
-      System.out.println("Starting conversion checks");
-      System.out.println("cost12: " + cost12);
-      System.out.println("cost21: " + cost21);
       if(cost12 < cost21 && cost12 < impossible){
         sub1 = convert( sub1, sub2.type );
         trueType = sub2.type;
@@ -603,20 +593,14 @@ public class FunctionChecker
             if(sub1.type instanceof type.Pointer && sub2.type instanceof type.Integer){
               trueType = new type.Pointer( ((type.Pointer) sub1.type). tp );
             } else {
-              System.out.println("Hello from Hans:");
-              System.out.println("sub1:\n" + sub1);
-              System.out.println("sub2:\n" + sub2);
               throw new Error.checkExpr("function " + funcname, appl,
                   "Incompatible types " + sub1.type.toString() + " and " + sub2.type.toString());
             }
           }
-      System.out.println("Finished conversion checks");
 
-      System.out.println("Starting constructing tree node");
       ast.Tree res = new ast.Apply(binary, sub1, sub2);
       res. type = trueType;
       res. lr = 'R';
-      System.out.println("Finished constructing tree node");
 
       return res;
     } 
@@ -780,10 +764,8 @@ public class FunctionChecker
 
   public static ast.Tree array2pointer( ast.Tree t )
   {
-    System.out.println("Echo from Dnislam\n" + t);
     if( t. lr == 'L' && t. type instanceof type.Array )
     {
-      System.out.println("Hello from Dnislam\n" + t);
       type.Type tp = ((type.Array) t. type ). tp; 
       ast.Apply res = new ast.Apply( "[conv]", t );
 

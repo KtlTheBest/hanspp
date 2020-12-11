@@ -119,7 +119,6 @@ CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
   String x = yytext();
   char c = x.charAt(0);
   if(c == '\\'){
-    System.out.println("If KEEK");
     c = x.charAt(1);
     if(c == '0') return symbol( sym. POINTERCONST, new ast.Pointer(0) );
     if(c == 'b') c = '\b';
