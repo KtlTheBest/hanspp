@@ -342,6 +342,7 @@ public class Translator
     if( expr instanceof ast.Apply && 
         ((ast.Apply) expr ).sub. length == 1 )
     {
+      System.out.println("Hello from Zhalgas\n" + expr);
       ast.Apply appl = (ast.Apply) expr;  
       java.lang.String unop = appl. function;  
       java.lang.String reg1 = regtranslateExpr( appl.sub[0] );

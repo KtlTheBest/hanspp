@@ -482,6 +482,10 @@ public class FunctionChecker
             sub. type);
 
         ast. Tree res = makeRValue(sub);
+        type.Type kek = res.type;
+        res = new ast.Apply("neg", res);
+        res.type = kek;
+        res.lr = 'R';
         return res;
       }
 
