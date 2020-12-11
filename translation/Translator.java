@@ -424,7 +424,7 @@ public class Translator
               tempreg
               ));
         emit( new Instruction.Store( resReg, reg1 ) );
-        return reg1;
+        return resReg;
       }
 
     }
