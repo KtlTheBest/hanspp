@@ -366,13 +366,15 @@ public class Translator
         // If both types are pointers, we also assume that nothing needs
         // to be done:
 
-        if( from instanceof type.Pointer && into instanceof type.Pointer )
-          return reg1;
+        java.lang.String result = registers. create( );
+
+        if( from instanceof type.Pointer && into instanceof type.Pointer ){
+          emit( new Instruction.Conv( result, into, reg1 ) );
+        }
 
         // In other cases, we emit a Conv instruction and hope for
         // the best:
 
-        java.lang.String result = registers. create( );
         emit( new Instruction.Conv( result, into, reg1 )); 
         return result;  
       }
@@ -390,35 +392,38 @@ public class Translator
           unop. equals( "[mmx]" ) )
       {
         java.lang.String tempreg = registers. create( );
+        java.lang.String regval = registers. create( );
         emit( new Instruction.Constant( tempreg, new java.lang.Integer(1), appl.trueType( ) ) );
+        emit( new Instruction.Load( regval, expr. type, reg1 ) );
 
-        java.lang.String resReg = reg1;
+        java.lang.String resReg = registers. create( );
         java.lang.String op = "string";
 
         if( unop. equals("[xpp]")){
           op = "add";
+          resReg = regval;
         }
         if( unop. equals("[xmm]")){
           op = "sub";
+          resReg = regval;
         }
         if( unop. equals("[ppx]")){
           op = "add";
-          resReg = tempreg;
         }
         if( unop. equals("[mmx]")){
           op = "sub";
-          resReg = tempreg;
         }
 
+        emit( new Instruction.Comment( "Trying to perform " + unop + " on " + regval + " and " + tempreg + " and store result in " + resReg ) );
         emit( new Instruction.Binary(
               op,
               resReg,
               appl.trueType(),
-              reg1,
+              regval,
               tempreg
               ));
-
-        return resReg;
+        emit( new Instruction.Store( resReg, reg1 ) );
+        return reg1;
       }
 
     }

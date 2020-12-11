@@ -1,0 +1,7 @@
+structdef test = ( val : pointer (integer) );
+function main( ) : void
+begin
+  p : test;
+  p. val = null;
+  return
+end

@@ -75,6 +75,8 @@ EscapeChar = "\\"{EscapeSymbols}
 CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
 
 %%
+"++"   { return symbol( sym. PLUSPLUS ); }
+"--"   { return symbol( sym. MINUSMINUS ); }
 "="    { return symbol( sym. ASSIGN ); }
 "."    { return symbol( sym. DOT ); }
 "["    { return symbol( sym. LSQPAR ); }
@@ -92,8 +94,6 @@ CharConst = \'({Alnum}|{SpecialChar}|{EscapeChar})\'
 "||"   { return symbol( sym. OR ); }
 "?"    { return symbol( sym. QUESTION ); }
 "&"    { return symbol( sym. AMPERSAND ); }
-"++"   { return symbol( sym. PLUSPLUS ); }
-"--"   { return symbol( sym. MINUSMINUS ); }
 "=="   { return symbol( sym. EQ ); }
 "<="   { return symbol( sym. LE ); }
 ">="   { return symbol( sym. GE ); }

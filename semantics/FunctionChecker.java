@@ -427,8 +427,12 @@ public class FunctionChecker
               appl, "Can't perform " + unary + " on type " + sub. type. toString());
               }
 
-        ast. Tree res = makeRValue(sub);
-        return res;
+        type.Type kek = sub. type;
+        sub = new ast.Apply( unary, sub );
+        sub. type = kek;
+        sub = makeRValue( sub );
+        sub.lr = 'R';
+        return sub;
       }
 
       if(unary.equals("pntr")){

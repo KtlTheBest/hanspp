@@ -1,0 +1,8 @@
+function main( ) : void
+begin
+  i : integer;
+  i = 0;
+  print i ++; newline;
+  print ++ i; newline;
+  return
+end

@@ -1,4 +1,57 @@
+constant dim = 3;
 structdef list = ( first : double, next : pointer ( list ) );
+structdef matrix = ( val : array( dim, array( dim, double )));
+
+function printmatrix( m : pointer( matrix )) : void
+begin
+   print "matrix "; newline;
+   i : integer;
+   i = 0;
+   while i < dim do
+   begin
+      j : integer ;
+      j = 0 ;
+      while j < dim do
+      begin
+         print "   ";
+         print m -> val[i][j];
+         j ++
+      end;
+      newline;
+      i ++
+   end;
+   newline;
+   return
+end
+
+function matrixproduct( m1 : pointer( matrix ),
+                        m2 : pointer( matrix )) : matrix
+begin
+   result : matrix;
+
+   i : integer;
+   i = 0;
+   while i < dim do
+   begin
+      j : integer;
+      j = 0;
+      while j < dim do
+      begin
+         result.val[i][j] = 0.0;
+         k : integer;
+         k = 0;
+         while k < dim do
+         begin
+            result.val[i][j] = result.val[i][j] +
+                               m1 -> val[i][k] * m2 -> val[k][j] ;
+            ++ k
+         end;
+         ++ j
+      end;
+      ++ i
+   end;
+   return result
+end
 
 function listsum( cur : pointer( list ) ) : double
 begin
@@ -19,15 +72,14 @@ end
 
 function listlength( cur : pointer( list ) ) : integer
 begin
-  len : integer;
 
   if cur == null then
     return 0;
 
-  return len + listlength(cur -> next)
+  return 1 + listlength(cur -> next)
 end
 
-function main ( ) : void
+function test1 ( ) : void
 begin
    l1 : list;
    l2 : list;
@@ -42,5 +94,34 @@ begin
    print listsum( &l1 ); newline;
    print "the length is ";
    print listlength( &l1 ); newline;
+  return
+end
+
+function test2 ( ) : void
+begin
+   m1 : matrix;
+   m2 : matrix;
+
+   m1.val[0][0] = 1; m1.val[0][1] = -1; m1.val[0][2] = 9;
+   m1.val[1][0] = 2; m1.val[1][1] = 6; m1.val[1][2] = -5;
+   m1.val[2][0] = 4; m1.val[2][1] = 8; m1.val[2][2] = 12;
+   printmatrix( &m1 );
+
+   m2.val[0][0] = 7; m2.val[0][1] = 2; m2.val[0][2] = 3;
+   m2.val[1][0] = 3; m2.val[1][1] = 1; m2.val[1][2] = 6;
+   m2.val[2][0] = 5; m2.val[2][1] = 8; m2.val[2][2] = 13;
+   printmatrix( &m2 );
+
+   m3 : matrix;
+   m3 = matrixproduct( &m1, &m2 );
+   print "this is the product"; newline;
+   printmatrix( &m3 );
+   return
+end
+
+function main( ) : void
+begin
+  test1();
+  test2();
   return
 end
