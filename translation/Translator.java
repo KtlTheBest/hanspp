@@ -391,6 +391,7 @@ public class Translator
       {
         java.lang.String tempreg = registers. create( );
         java.lang.String regval = registers. create( );
+        java.lang.String newval = registers. create( );
         emit( new Instruction.Constant( tempreg, new java.lang.Integer(1), appl.trueType( ) ) );
         emit( new Instruction.Load( regval, expr. type, reg1 ) );
 
@@ -407,19 +408,21 @@ public class Translator
         }
         if( unop. equals("[ppx]")){
           op = "add";
+          resReg = newval;
         }
         if( unop. equals("[mmx]")){
           op = "sub";
+          resReg = newval;
         }
 
         emit( new Instruction.Binary(
               op,
-              resReg,
+              newval,
               appl.trueType(),
               regval,
               tempreg
               ));
-        emit( new Instruction.Store( resReg, reg1 ) );
+        emit( new Instruction.Store( newval, reg1 ) );
         return resReg;
       }
 
